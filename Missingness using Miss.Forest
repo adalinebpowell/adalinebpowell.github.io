@@ -1,0 +1,556 @@
+---
+title: "PaperNA's"
+author: "Adaline Powell"
+date: "2024-04-29"
+output: 
+  prettydoc::html_pretty:
+    theme: tactile
+    toc: yes
+---
+## Missingness
+In this analyiss, I confront the challenge of missing data within my dataset and explore methods to address it. Missing data can compromise the integrity of our analyses, but understanding the nature of missingness is crucial for selecting appropriate strategies.
+
+Missing data can occur for various reasons, classified into three main categories: missing completely at random (MCAR), missing at random (MAR), and missing not at random (MNAR). In MCAR, the missingness is unrelated to the observed or unobserved data, representing a random process. MAR occurs when the probability of missingness depends on observed data but not on unobserved data. This means we can use available information to understand why data is missing. In contrast, MNAR suggests that the missingness is related to unobserved data, making it more challenging to address as the reasons for missingness are not easily discernible.
+
+In this analysis, I address the issue of missing data within the ANES 2016 dataset while investigating the effect of skin tone on various socio-political variables and personal characteristics. I will examine the prevalence and patterns of missingness across variables such as skin tone, feminist support, voting behavior, party identification, and personal characteristics like gender, education, and marital status.
+
+```{r, include=FALSE}
+library(ggplot2) 
+library(effects) 
+library(effects)
+library(sjPlot) 
+library(jtools)
+library(missMethods)
+library(magrittr)
+library(haven)
+library(sandwich) #robust regression
+library(naniar) # analyzie missingness
+library(missForest) #random forest single imputation
+library(mice) # mind set pooling strategiy for imputantion
+library(ranger)
+library(pander)
+library(effects)
+require(nnet)
+library(ggeffects) 
+cbp2 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", 
+          
+          "#F0E442", "#D55E00", "#CC79A7") 
+
+
+set.seed(24)
+
+anes <- read_sav("~/Desktop/Race Project copy/Data/anes_timeseries_2016_sav/anes_timeseries_2016.sav")
+```
+
+
+```{r, include=FALSE}
+anens <- data.frame(matrix(NA, nrow= 4270, ncol=0))
+
+#View(anens)
+
+#race
+anens$race <- NA
+anens$race[anes$V161310x == 1 ] <- "White"
+anens$race[anes$V161310x == 2 ] <- "Black"
+anens$race[anes$V161310x == 3 ] <- "Asian"
+anens$race[anes$V161310x == 4 ] <- "Native A."
+anens$race[anes$V161310x == 5 ] <- "Hispanic"
+anens$race[anes$V161310x == 6 ] <- "Other"
+
+table(anens$race)
+
+
+# V162368 r rate own skin tone
+anens$skintone <- NA
+anens$skintone[anes$V162368 == 1 ] <- 1 # light
+anens$skintone[anes$V162368 == 2 ] <- 1
+anens$skintone[anes$V162368 == 3 ] <- 1
+anens$skintone[anes$V162368 == 4 ] <- 2
+anens$skintone[anes$V162368 == 5 ] <- 2
+anens$skintone[anes$V162368 == 6 ] <- 2
+anens$skintone[anes$V162368 == 7 ] <- 2
+anens$skintone[anes$V162368 == 8 ] <- 3 
+anens$skintone[anes$V162368 == 9 ] <- 3 
+anens$skintone[anes$V162368 == 10 ] <- 3 # dark
+
+```
+
+
+```{r, include=FALSE}
+## Full data variables
+
+
+#Party ID
+anens$party <- NA
+anens$party[anes$V161155 == 1 ] <- "Democrat" 
+anens$party[anes$V161155 == 2 ] <- "Republican"
+anens$party[anes$V161155 == 3 ] <- "Indepndent"
+anens$party[anes$V161155 == 0 ] <- "Other"
+anens$party[anes$V161155 == 5 ] <- "Other"
+
+
+##Ideological Strength
+anens$id_fold <- NA
+anens$id_fold[anes$V161158x == 1 ] <- 1 #strong
+anens$id_fold[anes$V161158x == 7 ] <- 1
+anens$id_fold[anes$V161158x == 2 ] <- .66
+anens$id_fold[anes$V161158x == 6 ] <- .66
+anens$id_fold[anes$V161158x == 3 ] <- .33 # lean
+anens$id_fold[anes$V161158x == 5 ] <- .33
+anens$id_fold[anes$V161158x == 4 ] <- 0
+
+
+#Vote
+anens$vote <- NA
+anens$vote[anes$V161005 == 1 ] <- 1 
+anens$vote[anes$V161005 == 2 ] <- 0
+
+
+#Aff Polarization
+anens$dem_fel <- NA
+anens$dem_fel <- anes$V161095
+
+anens$rep_fel <- NA
+anens$rep_fel <- anes$V161096
+
+anens$aff <- NA
+anens$aff <- abs(anens$rep_fel - anens$dem_fel)
+
+#political efficancy varible
+anens$dem_care <- NA
+anens$dem_care[anes$V161160 == 1 ] <- 1/5 #cared about
+anens$dem_care[anes$V161160 == 2 ] <- 2/5
+anens$dem_care[anes$V161160 == 3 ] <- 3/5 
+anens$dem_care[anes$V161160 == 4 ] <- 4/5 
+anens$dem_care[anes$V161160 == 5 ] <- 5/5 # not cared 
+
+anens$rep_care <- NA
+anens$rep_care[anes$V161165 == 1 ] <- 1/5 #cared about
+anens$rep_care[anes$V161165 == 2 ] <- 2/5
+anens$rep_care[anes$V161165 == 3 ] <- 3/5 
+anens$rep_care[anes$V161165 == 4 ] <- 4/5 
+anens$rep_care[anes$V161165 == 5 ] <- 5/5 # not cared
+
+
+##creating index- higher numbers indicate more suppoirt of women
+##feminist
+anens$femdes <- NA
+anens$femdes[anes$V161346 == 1] <- 5/5
+anens$femdes[anes$V161346 == 2] <- 4/5
+anens$femdes[anes$V161346 == 3] <- 3/5
+anens$femdes[anes$V161346 == 4] <- 2/5
+anens$femdes[anes$V161346 == 5] <- 1/5
+
+
+
+#Favor/oppose equal pay for men and women
+anens$fempay <- NA
+anens$fempay[anes$V162150x == 1] <- 7/7 #Favor a great deal
+anens$fempay[anes$V162150x == 2] <- 6/7  
+anens$fempay[anes$V162150x == 3] <- 5/7  
+anens$fempay[anes$V162150x == 4] <- 4/7  
+anens$fempay[anes$V162150x == 5] <- 3/7  
+anens$fempay[anes$V162150x == 6] <- 2/7
+anens$fempay[anes$V162150x == 7] <- 1/7  #Oppose a great deal
+
+anens$femcon <- NA
+anens$femcon[anes$V161345 == 1] <- 5/5 
+anens$femcon[anes$V161345 == 3] <- 3/5
+anens$femcon[anes$V161345 == 2] <- 1/5 
+
+anens$feminist <- NA
+
+anens$feminist <- (anens$femdes + anens$fempay + anens$femcon) / 3
+hist(anens$feminist)
+
+
+```
+
+
+
+
+```{r, include=FALSE}
+## Controls
+
+
+#Binary- Gender
+anens$gender <- NA
+anens$gender[anes$V161342 == 1 ] <- "1Male" #Male
+anens$gender[anes$V161342 == 2 ] <- "Female" #Female
+
+
+
+#education: dummy, bachlors or no bachlors
+anens$education <- NA
+anens$education[anes$V161270 == 1 ] <- 0
+anens$education[anes$V161270 == 2 ] <- 0
+anens$education[anes$V161270 == 3 ] <- 0
+anens$education[anes$V161270 == 4 ] <- 0
+anens$education[anes$V161270 == 5 ] <- 0
+anens$education[anes$V161270 == 6 ] <- 0
+anens$education[anes$V161270 == 7 ] <- 0
+anens$education[anes$V161270 == 8 ] <- 0
+anens$education[anes$V161270 == 9 ] <- 0
+anens$education[anes$V161270 == 10 ] <- 0
+
+anens$education[anes$V161270 == 11 ] <- 0
+anens$education[anes$V161270 == 12 ] <- 0
+
+anens$education[anes$V161270 == 13 ] <- 1
+
+anens$education[anes$V161270 == 14 ] <- 1
+anens$education[anes$V161270 == 15 ] <- 1
+anens$education[anes$V161270 == 16 ] <- 1
+
+
+#Marrital
+anens$marital <- NA
+anens$marital[anes$V161268 == 1 ] <- "Married"
+anens$marital[anes$V161268 == 2 ] <- "Married"
+anens$marital[anes$V161268 == 3 ] <- "Widow"
+anens$marital[anes$V161268 == 4 ] <- "Divorced"
+anens$marital[anes$V161268 == 5 ] <- "Separated"
+anens$marital[anes$V161268 == 6 ] <- "Never Married"
+
+
+# Create quartiles for income
+anens$income <- cut(anes$V161361x, breaks = 4, labels = c(1, 2, 3, 4))
+
+# Display the quartiles
+table(anens$vote, anens$race)
+
+
+library(haven)
+anes$V160501 <- as_factor(anes$V160501)
+anens$mode <- NA
+anens$mode[anes$V160501 == "1. FTF /CASI" ] <- "FTF"
+anens$mode[anes$V160501 == "2. Web" ] <- "Web"
+table(anens$mode)
+
+```
+
+
+### What is missing in the cleans ANES 2016 data set?
+ 
+
+Although only 3% of the data within this dataset is missing, most of it comes from the skin tone variable, which is of great importance for answering the research question. Additionally, it appears that one of the variables used to create the feminist index has a high proportion of missingness, resulting in the index itself having a considerable amount of missing data as well.
+
+
+#### Why is there missinging
+The question we must now address is: why do we observe missingness in our dataset? Specifically, why do we encounter a significant number of empty values for the skin tone variable, considering its crucial importance for this analysis?
+
+To further investigate this issue, I incorporated the mode of interviews conducted in the ANES survey, which includes both face-to-face and web-based interviews. In the face-to-face interviews, interviewers were trained to accurately assess respondents' skin tone using a standardized scale. However, web-based surveys lacked this opportunity for assessment by trained interviewers.
+
+This leads us to speculate that the mode of interview may be a contributing factor to the missingness observed in the skin tone variable. Missingness appears to be related to the mode of interview, and this information is readily available in our dataset for further exploration.
+
+Given this understanding, it seems plausible to conclude that missingness in the skin tone variable may be at random, as it is associated with the mode of interview, a known variable in our dataset. With this insight, employing a machine learning model for imputation could potentially offer the most effective approach to handle missing data under this variable, leveraging available information to accurately predict missing values.
+
+
+```{r, echo=FALSE}
+full_na <- colSums(is.na(anens))
+#print(full_na)
+vis_miss(anens)
+print(full_na)
+
+##remove feminsit meausres that have a lot of nas- femimp and fem pay.
+```
+
+
+
+```{r, include=FALSE}
+library(dplyr)
+
+#making a contingecy table looking at when the value is missing in skintone (na is true) what mode of interview 
+comparison_table <- table(Mode_of_Interview = anens$mode, NA_in_Skintone = is.na(anens$skintone))
+comparison_df <- as.data.frame.matrix(comparison_table)
+print(comparison_df)
+
+#missness is mostly due to the mode of interview
+#This is missingness at random, use miss forest to help predict the skin tone based on other vairbales 
+print(full_na)
+
+```
+
+
+
+
+
+```{r, include=FALSE}
+
+
+#feminist = anens$feminist, vote = anens$vote, party = anens$party,
+
+anens$race <- as.factor(anens$race)
+anens$skintone <- as.factor(anens$skintone)
+anens$party <- as.factor(anens$party)
+anens$id_fold <- as.numeric(anens$id_fold)
+anens$vote <- as.numeric(anens$vote)
+anens$dem_fel <- as.numeric(anens$dem_fel)
+anens$rep_fel <- as.numeric(anens$rep_fel)
+anens$aff <- as.numeric(anens$aff)
+anens$dem_care <- as.numeric(anens$dem_care)
+anens$rep_care <- as.numeric(anens$rep_care)
+anens$femdes <- as.numeric(anens$femdes)
+anens$fempay <- as.numeric(anens$fempay)
+anens$femcon <- as.numeric(anens$femcon)
+anens$feminist <- as.numeric(anens$feminist)
+anens$gender <- as.factor(anens$gender)
+anens$education <- as.factor(anens$education)
+anens$marital <- as.factor(anens$marital)
+anens$income <- as.factor(anens$income)
+anens$mode <- as.factor(anens$mode)
+
+
+
+  
+impute_vars <- c("race", "skintone", "id_fold", 
+                 "dem_care", "rep_care", "gender", "education", "marital" 
+                 )
+
+preserve_vars <- c("vote", "dem_fel", "rep_fel","income", "mode", "aff", "party", "femdes", "fempay", "femcon", "feminist")
+
+
+imputed_data <- missForest(anens[, impute_vars])$ximp
+
+
+
+anens <- cbind(imputed_data, anens[, preserve_vars])
+
+head(anens_imputed)
+
+full_imp <- colSums(is.na(anens_imputed))
+print(full_imp)
+vis_miss(anens_imputed)
+
+## something happened with party
+
+```
+##### Data is no longer missing! YAY
+
+After applying missForest to impute the missing variables, we no longer have any missing values (NAs) in our dataset. It is crucial to note that researchers should avoid imputing missing values for their dependent variables as it can potentially bias the results. Therefore, any remaining missing values in our dataset are primarily observed in the dependent variables.
+
+```{r, echo=FALSE}
+vis_miss(anens_imputed)
+```
+
+
+```{r, include=FALSE}
+
+# Data set with just blacks 
+black <- data.frame(matrix(NA, nrow= 397, ncol=0))
+black <- subset(anens, race == "Black")
+
+black_im <- data.frame(matrix(NA, nrow= 403, ncol=0))
+black_im <- subset(anens_imputed, race == "Black")
+
+
+```
+
+
+```{r, include=FALSE}
+vote.mbg_OG <- glm(vote ~ skintone * gender + income + education, family= "binomial", data = black) 
+pdIDB_OG <- multinom(party ~ skintone*gender +income + education , data = black) 
+aff.mb_OG <- lm(feminist ~ skintone*gender +income + education , data = black) 
+
+
+
+
+vote.mbg <- glm(vote ~ skintone * gender + income + education, family= "binomial", data = black_im) 
+pdIDB <- multinom(party ~ skintone*gender +income + education , data = black_im) 
+aff.mb <- lm(feminist ~ skintone*gender +income + education , data = black_im) 
+```
+
+### Comparing listwise deletion with missForest imputation
+We now turn to assessing the performance of machine learning imputation and listwise deletion in handling missing data. The tables below compare the two methods, focusing on the relationship between skin tone and voting probability in the first table, and the relationship between skin tone and feminist support in the second.
+
+Firstly, examining the voting probability, both models seem to perform similarly, with estimates not deviating significantly from each other. However, one notable difference lies in the impact of missing values. When missing values are imputed, the difference in voting probability between medium skin tone (skin tone two) and skin tone three is notably greater compared to listwise deletion. Additionally, with imputed missing values, education emerges as statistically significant.
+
+Turning to the analysis of feminist support, the estimates between the two methods are nearly identical. However, similar to the voting probability analysis, education is statistically significant in the imputed dataset.
+
+
+```{r, echo=FALSE}
+tab_model(vote.mbg_OG, vote.mbg, #file = "vote.doc, 
+          title= "Table 1: Voting",
+          dv.labels= c("Listwise", "Imputated"),
+          pred.labels = c("{Intercept}",
+                          "Skintone[2]",
+                          "Skintone[3]",
+                          "Gender[Female]",
+                          "Income [Q2]",
+                          "Income[Q3]",
+                          "Income[Q4]",
+                          "Education",
+                          "Skintone[2]:Female",
+                          "Skintone[3]:Female"))
+
+tab_model(aff.mb_OG, aff.mb,  #file = "aff.doc", 
+          title= "Table 2: Feminism",
+          dv.labels= c("Listwise", "Imputated"),
+          pred.labels = c("{Intercept}",
+                          "Skintone[2]",
+                          "Skintone[3]",
+                          "Gender[Female]",
+                          "Income [Q2]",
+                          "Income[Q3]",
+                          "Income[Q4]",
+                          "Education",
+                          "Skintone[2]:Female",
+                          "Skintone[3]:Female"))
+
+
+tab_model(pdIDB)
+
+tab_model(vote.mbg, file = "votee.doc", 
+          title= "Table 1: Voting",
+          dv.labels= c("Voting"),
+          pred.labels = c("{Intercept}",
+                          "Skintone[2]",
+                          "Skintone[3]",
+                          "Gender[Female]",
+                          "Income [Q2]",
+                          "Income[Q3]",
+                          "Income[Q4]",
+                          "Education",
+                          "Skintone[2]:Female",
+                          "Skintone[3]:Female"))
+
+tab_model( aff.mb,  file = "aff.doc", 
+          title= "Table 2: Feminism",
+          dv.labels= c("Feminist Support"),
+          pred.labels = c("{Intercept}",
+                          "Skintone[2]",
+                          "Skintone[3]",
+                          "Gender[Female]",
+                          "Income [Q2]",
+                          "Income[Q3]",
+                          "Income[Q4]",
+                          "Education",
+                          "Skintone[2]:Female",
+                          "Skintone[3]:Female"))
+
+
+#tab_model(pdIDB_OG, pdIDB)
+
+```
+
+
+Below provides a graphic of models assessing party. Similar to voting probability, the imputated data set clarifies the pattern. Furthermore the relationship appears more linear compared to the listwise deletion. 
+
+
+
+```{r, echo=FALSE}
+
+g2b <- ggpredict(pdIDB_OG, terms=c("skintone")) 
+
+
+
+ggplot(g2b, aes(x=x, y=predicted, colour=response.level)) + 
+  #geom_point(size = 3) + 
+  geom_jitter(shape = 19, width = 0.1, size = 3) +  
+  theme_bw() +  
+  ggtitle("Listwise: Party") +
+  theme(legend.position="right") +  
+  scale_color_manual(values = cbp2, 
+                     breaks=c('Democrat', 
+                              'Republican', 
+                              'Indepndent',
+                              'Other')) + 
+  labs(x="Skintone",  
+       y = "Predicted Probability",  
+       colour = "Response\nCategory") 
+
+
+g2bb <- ggpredict(pdIDB, terms=c("skintone")) 
+
+
+
+ggplot(g2bb, aes(x=x, y=predicted, colour=response.level)) + 
+  #geom_point(size = 3) + 
+  geom_jitter(shape = 19, width = 0.1, size = 3) +  
+  theme_bw() +  
+  ggtitle("Imputated: Party") +
+  theme(legend.position="right") +  
+  scale_color_manual(values = cbp2, 
+                     breaks=c('Democrat', 
+                              'Republican', 
+                              'Indepndent',
+                              'Other')) + 
+  labs(x="Skintone",  
+       y = "Predicted Probability",  
+       colour = "Response\nCategory") 
+
+```
+
+
+
+#### Voting
+```{r, echo=FALSE}
+plot(allEffects(vote.mbg)[[3]], xlab = "Skin tone", ylab = "Vote Probability", main = "Imputated:Effects of Skin Tone on Voting")
+plot(allEffects(vote.mbg_OG)[[3]], xlab = "Skin tone", ylab = "Vote Probability", main = "Listwise: Effects of Skin Tone on Voting")
+
+```
+
+#### Party
+
+```{r, echo=FALSE}
+plot(allEffects(pdIDB)[[3]], xlab = "Skin tone", ylab = "Party Probability", main = "Imputated:Effects of Skin Tone on Party")
+plot(allEffects(pdIDB_OG)[[3]], xlab = "Skin tone", ylab = "Party Probability", main = "Listwise:Effects of Skin Tone on Party")
+
+```
+
+#### Feminist
+
+```{r, echo=FALSE}
+
+plot(allEffects(aff.mb)[[3]], xlab = "Skin tone", ylab = "Feminist", main = "Imputated: Effects of Skin Tone on Feminist")
+plot(allEffects(aff.mb_OG)[[3]], xlab = "Skin tone", ylab = "Feminist", main = "Listwise:Effects of Skin Tone on Feminist")
+```
+
+
+
+```{r, include=FALSE}
+effect_plot(aff.mb_OG, 
+            pred = skintone,
+            interval = TRUE,
+            y.label = "Feminism",
+            x.label = "SkinTone",
+            main.title = "Listwise:Feminism",
+            line.thickness = .5)
+effect_plot(aff.mb, 
+            pred = skintone,
+            interval = TRUE,
+            y.label = "Feminism",
+            x.label = "SkinTone",
+            main.title = "Imputated: Feminism",
+            line.thickness = .5)
+
+effect_plot(vote.mbg_OG, 
+                   pred = skintone,
+                   interval = TRUE,
+                   y.label = "Listwise: Voting Probability ",
+                   x.label = "SkinTone",
+                   main.title = "Figure 4",
+                   line.thickness = .5)
+
+effect_plot(vote.mbg, 
+                   pred = skintone,
+                   interval = TRUE,
+                   y.label = "Voting Probability ",
+                   x.label = "SkinTone",
+                   main.title = "Imputated: Voting",
+                   line.thickness = .5)
+
+```
+
+
+
+
+## Conclusion
+
+Overall, it appears that both listwise deletion and machine learning methods provide us with similar results. If anything, we may observe that machine learning may overestimate the relationship between the variables providing us with an exaggerated relationship. However, the statistical significance remains consistent across each section and each dependent variable. It is important to note that education consistently emerges as statistically significant throughout the imputed dataset.
+
+It is difficult to conclude which method provided the closest results to reality because the estimates from both models were so similar. I believe further research, with better data, may benefit more from MissForest, as long as the researcher is aware of the cause of missingness.
+
+
+
+
