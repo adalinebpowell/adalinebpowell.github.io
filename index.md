@@ -9,7 +9,6 @@ title: "Adaline Powell"
 Hi, I'm Adaline Powell! Currently I am a master’s student in data science at UW Milwaukee. This site showcases some of my projects and visualizations!
 
 
-## Featured Projects
 
 <h2 style="text-align:center;">Featured Projects</h2>
 
