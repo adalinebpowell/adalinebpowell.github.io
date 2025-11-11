@@ -11,8 +11,8 @@ Hi, I'm Adaline Powell! Currently I am a master’s student in data science at U
 
 ## Featured Projects
 
-- [PulseML: Predicting Support for Democratic Norms](variableimportance.html)
-- [Missingness Analysis](Missingness.html)
+[![PulseML: Predicting Support for Democratic Norms](variableimportance.png)](variableimportance.html)
+[![Missingness Analysis](Missingness.png)](Missingness.html)
 
 ---
 
