@@ -58,4 +58,3 @@ Hi, I'm Adaline Powell! Currently I am a master’s student in data science at U
 
 ---
 
-[About Me →](about.html)
