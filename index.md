@@ -11,9 +11,35 @@ Hi, I'm Adaline Powell! Currently I am a master’s student in data science at U
 
 ## Featured Projects
 
-[![PulseML: Predicting Support for Democratic Norms](variableimportance.png)](variableimportance.html)
-[![Missingness Analysis](Missingness.png)](Missingness.html)
+<h2 style="text-align:center;">Featured Projects</h2>
 
+<div style="display:flex; justify-content:center; gap:40px; flex-wrap:wrap;">
+
+  <a href="variableimportance.html">
+    <img 
+      src="variableimportance.png" 
+      width="350" 
+      alt="PulseML: Predicting Support for Democratic Norms"
+      style="border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.15);" 
+    />
+  </a>
+
+  <a href="Missingness.html">
+    <img 
+      src="missingness.png" 
+      width="350" 
+      alt="Missingness Analysis"
+      style="border-radius:10px; box-shadow:0 4px 8px rgba(0,0,0,0.15);" 
+    />
+  </a>
+
+</div>
+
+<hr style="margin:40px 0;">
+
+<div style="text-align:center;">
+  <a href="about.html" style="font-size:18px; text-decoration:none; color:#0073b1;">About Me →</a>
+</div>
 ---
 
 [About Me →](about.html)
