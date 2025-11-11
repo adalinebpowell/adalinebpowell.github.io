@@ -9,7 +9,7 @@ This site showcases some of my RMarkdown projects and visualizations.
 
 ## Featured Projects
 
-- [PulseML: Predicting Support for Democratic Norms](PulseML.html)
+- [PulseML: Predicting Support for Democratic Norms](variableimportance.html)
 - [Missingness Analysis](Missingness.html)
 
 ---
