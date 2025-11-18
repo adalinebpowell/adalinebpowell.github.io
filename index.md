@@ -17,7 +17,7 @@ Hi, I'm Adaline Powell! Currently I am a master’s student in data science at U
 <!-- Negotiation Project -->
   <a href="negotiations.html" style="text-decoration:none;">
     <img 
-      src="variableimportance.png" 
+      src="cow.png" 
       alt="Predicting Negotiations"
       style="
         width:250px; 
