@@ -1,6 +1,13 @@
 ---
 title: "Adaline Powell"
 ---
+<style>
+  body {
+    background: linear-gradient(135deg, #eef2ff, #ffffff);
+    background-attachment: fixed;
+  }
+</style>
+
 <img src="https://media.licdn.com/dms/image/v2/D5603AQEHjz5RR88hHg/profile-displayphoto-crop_800_800/B56ZmENjc9J0AI-/0/1758859771265?e=1764201600&v=beta&t=YTDNeqb6IpxfrjRsmodOAAmIZbsG44KM6HNE8fsvtms" width="250" alt="Adaline Powell" style="border-radius: 50%; display: block; margin: auto;" />
 
 
