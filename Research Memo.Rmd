@@ -1,0 +1,508 @@
+---
+title: "Predicting Negotiations"
+date: "`r Sys.Date()`"
+author: "Adaline Powell"
+output: 
+  html_document:
+    theme: darkly
+    toc: true
+    toc_float: true
+    code_folding: hide
+---
+# Predicting Negotiation Settlements
+
+Resolutions to conflicts span a multitude of avenues and choices. Using negotiations as an avenue is commonly preferred because it seeks to achieve a solution where the parties involved perspectives and needs are respected, which ultimately minimizes the negative impacts of disagreement. The question remains: how are we able to predict a negotiated end? Are we aware of any factors that may point us to the direction of a negotiation? The purpose of this report is to provide direct answers to these questions. Furthermore, it intends to demonstrate three important predictors of negotiated ends to militarized disputes. With the inclusion of these three variables, we can significantly enhance our ability to evaluate disputes and determine if negotiation strategies are appropriate.
+
+
+```{r, include=FALSE} 
+
+library(ggplot2) 
+
+library(effects) 
+library(effects)
+library(sjPlot) 
+
+
+mida <- read.csv("~/Desktop/MIDA 5.0.csv")
+
+#View(mida) 
+
+``` 
+
+  
+
+  
+
+```{r, include=FALSE} 
+
+#cleaning the data 
+
+clean <- data.frame(matrix(NA, nrow= 2436, ncol=0)) 
+
+  
+
+#View(clean) 
+
+  
+
+## Dependent Variable: Settlement of Dispute 
+
+clean$Negotiated <- NA 
+
+clean$Negotiated[mida$settle == 1] <- 1 # negotiated 
+
+clean$Negotiated[mida$settle == 2] <- 0 #imposed 
+
+clean$Negotiated[mida$settle == 3] <- 0 #none  
+
+#unclear not included 
+
+table(mida$settle, clean$Negotiated) 
+
+  
+
+  
+
+#Fatality 
+
+table(mida$fatality) 
+
+clean$Fatality <- NA 
+
+clean$Fatality[mida$fatality == 0] <- 0 
+
+clean$Fatality[mida$fatality == 1] <- 1 # 1-25 
+
+clean$Fatality[mida$fatality == 2] <- 2 
+
+clean$Fatality[mida$fatality == 3] <- 3 
+
+clean$Fatality[mida$fatality == 4] <- 4 
+
+clean$Fatality[mida$fatality == 5] <- 5  
+
+clean$Fatality[mida$fatality == 6] <- 6 #>999 
+
+  
+
+  
+
+  
+
+#Highest Actioin in Dispute 
+
+clean$Highest <- NA 
+
+clean$Highest[mida$hiact == 1] <- 1 
+
+clean$Highest[mida$hiact == 2] <- 2 
+
+clean$Highest[mida$hiact == 3] <- 3 
+
+clean$Highest[mida$hiact == 4] <- 4 
+
+clean$Highest[mida$hiact == 5] <- 5 
+
+clean$Highest[mida$hiact == 6] <- 6 
+
+clean$Highest[mida$hiact == 7] <- 7 
+
+clean$Highest[mida$hiact == 8] <- 8 
+
+clean$Highest[mida$hiact == 9] <- 9 
+
+clean$Highest[mida$hiact == 10] <- 10 
+
+clean$Highest[mida$hiact == 11] <- 11 
+
+clean$Highest[mida$hiact == 12] <- 12 
+
+clean$Highest[mida$hiact == 13] <- 13 
+
+clean$Highest[mida$hiact == 14] <- 14 
+
+clean$Highest[mida$hiact == 15] <- 15 
+
+clean$Highest[mida$hiact == 16] <- 16 
+
+clean$Highest[mida$hiact == 17] <- 17 
+
+clean$Highest[mida$hiact == 18] <- 18 
+
+clean$Highest[mida$hiact == 19] <- 19 
+
+clean$Highest[mida$hiact == 20] <- 20 
+
+clean$Highest[mida$hiact == 21] <- 21 
+
+  
+
+  
+
+#different code- levels of action 
+
+clean$Highestd <- NA 
+
+clean$Highestd[mida$hiact == 1] <- 1 
+
+clean$Highestd[mida$hiact == 2] <- 1 
+
+clean$Highestd[mida$hiact == 3] <- 1 
+
+clean$Highestd[mida$hiact == 4] <- 1 
+
+clean$Highestd[mida$hiact == 5] <- 1 
+
+clean$Highestd[mida$hiact == 6] <- 2 
+
+clean$Highestd[mida$hiact == 7] <- 3 
+
+clean$Highestd[mida$hiact == 8] <- 3 
+
+clean$Highestd[mida$hiact == 9] <- 3 
+
+clean$Highestd[mida$hiact == 10] <- 3 
+
+clean$Highestd[mida$hiact == 11] <- 3 
+
+clean$Highestd[mida$hiact == 12] <- 3 
+
+clean$Highestd[mida$hiact == 13] <- 4 
+
+clean$Highestd[mida$hiact == 14] <- 4 
+
+clean$Highestd[mida$hiact == 15] <- 4 
+
+clean$Highestd[mida$hiact == 16] <- 4 
+
+clean$Highestd[mida$hiact == 17] <- 4 
+
+clean$Highestd[mida$hiact == 18] <- 4 
+
+clean$Highestd[mida$hiact == 19] <- 4 
+
+clean$Highestd[mida$hiact == 20] <- 5 
+
+clean$Highestd[mida$hiact == 21] <-  5 
+
+   
+
+#Hostitility Level of Dispute same as actions varaibkle
+
+  
+
+  
+
+#Outcome- not included? 
+
+#clean$Outcome <- NA 
+
+#clean$Outcome[mida$outcome == 1] <- "A" 
+
+#clean$Outcome[mida$outcome == 2] <- "B" 
+
+#clean$Outcome[mida$outcome == 3] <- "Yield A" 
+
+#clean$Outcome[mida$outcome == 4] <- "Yield B" 
+
+##clean$Outcome[mida$outcome == 5] <- "Stalemate" 
+
+#clean$Outcome[mida$outcome == 6] <- "Compromise" 
+
+#clean$Outcome[mida$outcome == 7] <- "Released" 
+
+#clean$Outcome[mida$outcome == 8] <- "Unclear" 
+
+#clean$Outcome[mida$outcome == 9] <- "Joins ongoing war" 
+
+table(mida$fatalpre) 
+
+  
+
+#State support 
+
+clean$A_Support <- NA 
+
+clean$A_Support <- mida$numa 
+
+  
+
+  
+
+clean$B_Support <- NA 
+
+clean$B_Support <- mida$numb 
+
+  
+
+#Recipricale dispute 
+
+clean$Reciprocated <- NA 
+
+clean$Reciprocated[mida$recip == 1] <- "Yes" 
+
+clean$Reciprocated[mida$recip == 0] <- "No" 
+
+  
+
+  
+
+##Length/duration of war by years or days 
+
+clean$Duration <- NA 
+
+  
+
+clean$Duration <- (mida$endyear - mida$styear) 
+
+  
+
+``` 
+
+# Data and Methods
+In order to conduct the analysis, data from the Correlates of War project with be utilized. To achieve more predictable results, I will employ logistic regression rather than a linear regression.
+
+Before returning to investigate the regression analysis it's best to assess the distribution and variance of each variable as well as the data as a whole.
+
+### Negotiations
+
+The dependent variable will represent the settlement of disputes, with a code of one indicating negotiation, zero indicating imposed or no settlement. The dataset also includes an 'unclear' option for this variable; however, it was not included in the coding scheme due to its potential to introduce ambiguity. In cases where the outcome is unclear, it could either result from negotiation or imposition.
+
+Figure 1 illustrates the distribution of the negotiation variable. Majority of disputes in this dataset do not result in negotiations. Specifically, around 2000 disputes are not negotiated, while approximately 400 disputes are negotiated.
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(clean, aes(x = Negotiated)) +
+  geom_histogram() +
+  ggtitle("Figure 1")
+```
+
+
+
+
+
+### Fatality
+
+The fatality levels were used as an explanatory variable, with 0 representing no fatalities and 6 indicating fatality rates exceeding 999. Figure 2 displays the distribution of fatality rates within this dataset. Most of the disputes in this dataset tend to have lower to no fatality rates.
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+ggplot(clean, aes(x = Fatality)) +
+  geom_histogram() +
+  ggtitle("Figure 2")
+
+```
+
+
+
+
+### Highest Action in Disuputes
+
+Another independent variable considered was the highest level of actions employed in disputes. This variable was coded from one to five, with lower levels indicating less aggressive actions and higher levels indicating escalated actions. Specifically, at lower levels of action, threats are more prevalent. As the action levels increase, the use of force becomes more apparent. Examples include threats at Level 2, shows of force at Level 3, use of chemical, biological, or radiological (CBR) weapons at Level 4, and involvement in interstate war at Level 5.
+
+Turning to Figure 3, we observe that the majority of disputes tend to cluster around higher levels of action. Specifically, most of the disputes are concentrated within Level 4.
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(clean, aes(x = Highestd)) +
+  geom_histogram() +
+  ggtitle("Figure 3") +
+  labs(x= "Action Levels")
+
+```
+
+
+
+### Duration
+The duration of disputes was calculated by subtracting the start year from the end year. Overall, it is apparent that most disputes last less than five years, as indicated by Figure 4.
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+ggplot(clean, aes(x = Duration)) +
+  geom_histogram() +
+  ggtitle("Figure 4")
+```
+
+
+
+
+
+
+
+```{r, include=FALSE, warning=FALSE, message=FALSE}
+#### Number of states on side A
+
+ggplot(clean, aes(x = A_Support)) +
+  geom_histogram() +
+  ggtitle("Figure 6")
+
+#Side A is the group that includes the state (or states) that first showed signs of threat or used force. This means the actor(s) in the first incident of the dispute are considered to be on side A.
+```
+
+
+
+
+#### Reciprocated Dispute
+
+Reciprocation within a dispute is coded to indicate its presence or absence. Figure 5 shows the distribution of this variable. Overall, there seems to be an equal number of disputes with and without reciprocation. 
+  
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+
+
+ggplot(clean, aes(x = Reciprocated)) +
+  geom_bar() +
+  ggtitle("Figure 5")
+
+
+```
+
+  
+ 
+
+```{r, include=FALSE} 
+
+#separating the data 
+
+rows <- sample(nrow(clean),(2436*0.6))  
+rows  
+#call from d1, which rows  
+tsample <- clean[rows,]  
+
+#View(tsample)  
+
+``` 
+
+
+  
+
+```{r, include=FALSE} 
+
+#creating the best model 
+
+
+#glm 
+
+glm1 <- glm(Negotiated ~ ., family = binomial, data=tsample) 
+summary(glm1) 
+gm1 <- step(glm1) 
+summary(gm1) 
+
+plot(allEffects(gm1)) 
+
+  
+
+par(mfrow = c(1,2)) 
+
+plot(gm1, which=1:2) 
+
+  
+
+``` 
+
+  
+  
+
+
+```{r, include=FALSE} 
+
+#Model 1 
+
+
+
+
+gm1<- glm(Negotiated ~ Duration + Reciprocated+ Fatality+Highest , family = binomial, data = tsample)   
+
+summary(gm1) 
+
+#plot(allEffects(gm1, selection = 4)) 
+
+tab_model(gm1) 
+library(jtools)
+
+effect_plot(gm1, pred= Fatality) 
+
+effect_plot(gm1, pred= Reciprocated) 
+
+effect_plot(gm1, pred= Duration) 
+effect_plot(gm1, pred= Highest) 
+
+``` 
+
+  
+
+
+  
+# The Model
+  
+
+Turning to the fit of the model, we can see that a linear regression would not be the most appropriate model to use as most of the assumptions are violated. As mentioned before, to improve predictability, I will use a  logistic regression rather than linear regression, focusing on predicting the probability of negotiation based on given variables.
+
+
+```{r, echo=FALSE}
+
+par(mfrow = c(1,2))
+plot(gm1, which=1:2)
+
+```
+
+
+
+In Table 1, we examine the results of the logistic regression. Beginning with the duration of the dispute, we note that although there is an 6% increase in the odds of negotiation as the duration increases, this variable lacks statistical significance. Nonetheless, we tentatively suggest that longer durations may slightly elevate the likelihood of negotiation.
+
+Moving to the presence of reciprocation, we observe that the probability of a negotiation is 71% higher when reciprocation is absent. This variable proves statistically significant. Hence, we infer that the absence of reciprocation can serve as a predictive factor for negotiation within a dispute.
+
+Regarding fatality levels, we find that negotiation odds rise by 17% at higher fatality levels. Consequently, as fatality levels increase, negotiation odds also tend to increase.
+
+Finally, examining action levels, we discover that negotiation odds decrease to 0.97 less than at lower action levels. Consequently, as action levels rise, the likelihood of negotiation decreases slightly.
+
+
+```{r, echo=FALSE} 
+tab_model(gm1, title = "Table 1",
+          p.adjust = "fdr")
+
+
+```
+
+
+These findings are further demonstrated in the below effects plots. 
+
+
+```{r, echo=FALSE} 
+
+effect_plot(gm1, pred= Fatality) 
+
+effect_plot(gm1, pred= Reciprocated) 
+
+effect_plot(gm1, pred= Duration) 
+effect_plot(gm1, pred= Highest) 
+
+
+``` 
+
+
+
+
+```{r, include=FALSE} 
+## Making predictions on imaginary disputues
+
+x <- data.frame(Fatality=1 , Duration=3 , Reciprocated = "Yes", Highest = 4) 
+
+p<- predict(gm1,x) 
+
+p 
+#Suppose we consider dispute with the following characteristics: The duration of the dispute is three years, reciprocation is present, the fatality rates are low, around level one, and the action level is approximately 4. Taking these factors into account, and utilizing the model just built, we would receive 
+``` 
+
+ 
+  
+  
+  
+# What should we look for in Disputes?
+Based on the regression analysis conducted above, we can conclude that reciprocation, fatality rates, and the level of action displayed in a dispute are three important variables in determining the likelihood of negotiation.Specifically, when examining reciprocation in a given dispute, investigators should assess its presence. If reciprocation is observed, the odds of negotiation are higher. Conversely, when analyzing fatality rates and levels of action, higher levels of action correspond to lower odds of negotiation. Therefore, if investigators note high levels of action in a dispute, they should be inclined to steer away from imposing or taking steps that might hinder negotiation efforts. Regarding fatality rates or levels, if investigators observe higher fatality levels, the likelihood of negotiation is higher. Thus, such observations should prompt a more favorable outlook toward negotiation prospects.
+
+It's important to highlight that only one variable, reciprocation, was found to be statistically significant in this regression analysis. Therefore, the outcomes of this analysis should be interpreted cautiously. 
+
+To enhance the predictability of the regression model, incorporating cultural aspects and characteristics of the disputes and parties involved could be beneficial. These additional factors could provide a better understanding of the negotiation dynamics and improve the accuracy of the model.
+
+
