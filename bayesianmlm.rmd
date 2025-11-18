@@ -1,0 +1,515 @@
+---
+title: "Civic Volunteerism Model: Predicting Vote Turnout"
+author: "Adaline Powell"
+date: "2024-04-08"
+output: html_document
+---
+
+## Introduction
+
+In the American context, scholars have confirmed the relationship between voting turnout and factors such as income, education, interest in politics, and membership in a political society. However, it is imperative to investigate whether these relationships extend beyond the United States. The purpose of this lab is to explore voter turnout on a cross-national scale and determine the effectiveness of these predictors in predicting voting behavior in other countries. Utilizing Bayesian multi-level models clustered by country, the aim is to discern patterns and associations. Within the World Value Dataset, interest in politics is coded as either 1 for "very interested" or 0 for "not interested." Education is represented by a binary code: 1 denotes "bachelor's degree" while 0 signifies "not bachelor's." Income is categorized into 10 levels, with 10 indicating the highest income bracket. Recruitment is indicated by individuals' membership in a political society. The voting behavior variable is coded as 0 for "did not vote" and 1 for "voted." Each country is abbreviated to a three-letter code. Priors are derived from existing literature: education (1.30), income (0.92), interest (1.53), and membership (1.37). Through this analysis, we aim to shed light on the universality of voting behavior predictors and their applicability across different national contexts.
+
+### The model
+The model employed in this analysis utilizes Bayesian multi-level models clustered by country, incorporating random slopes. This approach allows us to account for potential differences in voter turnout patterns across countries while capturing the variation within each country. By using random slopes, we acknowledge that the effects of predictors such as income, education, interest in politics, and membership in a political society may vary not only between countries but also within countries. This flexibility enables a more nuanced understanding of the factors influencing voter turnout on a cross-national scale, providing valuable insights into the complexity of voting behavior across different contexts.
+
+
+```{r, include=FALSE}
+library(mlmRev)
+library(lme4)
+library(rstanarm)
+library(ggplot2)
+library(tidyverse)
+library(haven)
+library(gridExtra)
+library(ggplot2)
+library(kableExtra)
+library(dplyr)
+library(knitr)
+library(sjPlot)
+library(effects)
+
+library(sjPlot)
+library(ggeffects) 
+library(jtools)
+```
+
+
+
+```{r, include=FALSE}
+tiny_samp <- read_csv("~/Desktop/1st year /703 /Week 12/WVS_Cross-National_Wave_7_csv_v5_0.csv")
+
+clean <- data.frame(matrix(NA, nrow=94278, ncol=0))
+
+
+```
+
+```{r, include=FALSE}
+
+
+clean$region <- NA 
+clean$region <- tiny_samp$B_COUNTRY_ALPHA
+
+
+
+
+#Resources
+#education
+clean$edu <- NA
+clean$edu[tiny_samp$Q275 == 1] <- 0 #primary not completed
+clean$edu[tiny_samp$Q275 == 2] <- 0
+clean$edu[tiny_samp$Q275 == 3] <- 0
+clean$edu[tiny_samp$Q275 == 4] <- 0
+clean$edu[tiny_samp$Q275 == 5] <- 0
+clean$edu[tiny_samp$Q275 == 6] <- 1 #bachelor
+clean$edu[tiny_samp$Q275 == 7] <- 1
+clean$edu[tiny_samp$Q275 == 8] <- 1 #doctoral
+clean$edu[tiny_samp$Q275 == 0] <- 0 #no edu-early childhood
+
+
+
+#income
+clean$income <- NA
+clean$income[tiny_samp$Q288 == 1] <- 1 #lowest income
+clean$income[tiny_samp$Q288 == 2] <- 2
+clean$income[tiny_samp$Q288 == 3] <- 3
+clean$income[tiny_samp$Q288 == 4] <- 4
+clean$income[tiny_samp$Q288 == 5] <- 5
+clean$income[tiny_samp$Q288 == 6] <- 6
+clean$income[tiny_samp$Q288 == 7] <- 7
+clean$income[tiny_samp$Q288 == 8] <- 8
+clean$income[tiny_samp$Q288 == 9] <- 9
+clean$income[tiny_samp$Q288 == 10] <- 10 #highest income
+
+
+#Engagment
+#intrest in politics  
+clean$intrest <- NA
+clean$intrest[tiny_samp$Q199 == 1] <- 1 #very intrested
+clean$intrest[tiny_samp$Q199 == 2] <- 2/3 # 
+clean$intrest[tiny_samp$Q199 == 3] <- 1/3 # 
+clean$intrest[tiny_samp$Q199 == 4] <- 0 #not at all intrested
+
+
+
+##Recruitment
+clean$reqr <- NA
+clean$reqr[tiny_samp$Q98 == 0] <- 0
+clean$reqr[tiny_samp$Q98 == 1] <- 1 # memeber
+
+
+### Vote or not
+clean$voter <- NA
+clean$voter <- ifelse(tiny_samp$Q222 %in% c(1, 2), 1, ifelse(tiny_samp$Q222 == 3, 0, NA))
+
+
+table(clean$voter, clean$region)
+
+```
+
+
+
+
+
+
+
+
+```{r, include=FALSE}
+library(rstanarm) 
+library(rstan)
+library(bayesplot)
+library(sjPlot)
+# Define prior predictor values (in log-odds ratio)
+prior_educ <- log(1.30)
+prior_income <- log(0.92)
+prior_interest <- log(1.53)
+prior_recruitment <- log(1.37)
+prior_region <- log(1.15)
+
+
+
+table(clean$region)
+
+```
+
+
+
+```{r, include=FALSE, warning= FALSE, message=FALSE}
+
+formula12 <- voter ~ income + edu + intrest + reqr + (1 + income + edu + intrest + reqr | region)
+
+
+
+mod_allin <- stan_glmer(formula = formula12, data = clean,
+                 family = binomial(link = "logit"),
+  prior = normal(
+    location = c(prior_income, prior_educ, prior_interest, prior_recruitment),
+    scale = NULL))
+
+
+
+
+sims <- as.matrix(mod_allin)
+mcmc_areas(sims[,-1], prob = 0.9)
+```
+
+
+
+```{r, include=FALSE}
+##table with means
+print(mod_allin, digits = 3)
+
+library(knitr)
+
+# Data
+data <- data.frame(
+  Variable = c("(Intercept)", "Income", "Education", "Poltical Intrest", "Recruitment"),
+  Median = c(1.347, -0.008, 0.378, 1.572, 0.079),
+  MAD_SD = c(0.161, 0.013, 0.056, 0.150, 0.102)
+)
+
+# Print table using kable
+kable(data, align = "c", caption = "Table 1") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+
+
+```
+
+
+
+
+```{r, echo=FALSE}
+kable(data, align = "c", caption = "Table 1") %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"))
+
+```
+
+
+
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+#print(mod_allin, digits = 3)
+
+
+tab_model(mod_allin, title= "Table 2",
+          dv.labels= c("Voter Turnout "),
+          pred.labels = c("{Intercept}",
+                          "Income",
+                          "Education",
+                          "Political Interest",
+                          "Recruitment"))
+```
+
+
+In table one, we can look over the medians of each of these variables and assess thier over all distrubtion. The median for income is approximately 0.01 less than the intercept, with a standard deviation of around 0.014. Education tends to be 0.4 units higher than the intercept, with a standard deviation of 0.06. Political interest has a median that is 1.6 units higher than the intercept, accompanied by a standard deviation of 0.15. Recruitment tends to be 0.08 units higher than the intercept, with a standard deviation of 0.1.
+
+Table 2 displays the probability of each variable. As income increases, the log odds of an individual voting increase by 0.99. Similarly, as education levels rise, the log odds of an individual voting increase by 1.46. Moreover, as an individual becomes more politically interested, their log odds of voting increase by 4.82 points. Additionally, when an individual is recruited or is a member of a political group, the odds of them voting increase by 1.08.
+
+
+The random effect in τ02 captures the variability of the data points, specifically the country points, around the mean when the variable is taken into account. This can be interpreted as within the variance of regional locations. I anticipate a variability of 3.29, which is rather small. In τ00, the between-country effect is manifested when we allow our slopes to vary, resulting in approximately 1.46 units of variance around the intercepts, again rather small. In τ11, the term describes how income, education, interest, and recruitment slopes vary around the grand mean slopes. All values indicate that the slopes do not vary significantly across countries. This suggests a relatively consistent relationship between these variables and voting likelihood across different regions, with minimal variation observed in the slopes between them. It could be argued that intrest may vary more with a value of 1.31. As for ICC, it measures the proportion of variance in the outcome variable that is attributable to the clusters (in this case, schools) when accounting for random slopes. A value of 0.3 suggests that a good portion of the variable can be explained by the regional clusters.
+
+
+## Probability Distrubtions
+
+### Income
+
+```{r, echo=FALSE}
+
+#income mean probability distrubtuion
+g1 <-mcmc_areas(sims,
+           pars = c('income'),
+           prob = 0.9)
+#credible intervals
+#posterior_interval(mod_allin, pars = "income", prob = 0.89)
+
+effect_plot(mod_allin, 
+            pred = income,
+            interval = TRUE,
+            y.label = "Voting Probability ",
+            x.label = "Income",
+            main.title = "Figure 1",
+            line.thickness = .5)
+
+g1
+
+```
+
+
+
+Figure one portrays the probability of voting based on income. Overall, we see a slight increase in the probability of voting as income increases, although it is not necessarily large. The figure below shows the distribution of the variable. The credible intervals for income are -0.029 and 0.014. The blue line represents the median centered around -0.008.
+
+
+
+### Education
+
+```{r, echo=FALSE}
+
+#education mean probability distrubtuion
+g2 <- mcmc_areas(sims,
+           pars = c('edu'),
+           prob = 0.9)
+
+#credible intervals
+posterior_interval(mod_allin, pars = "edu", prob = 0.89)
+
+effect_plot(mod_allin, 
+            pred = edu,
+            interval = TRUE,
+            y.label = "Voting Probability ",
+            x.label = "Education",
+            main.title = "Figure 3",
+            line.thickness = .5)
+
+g2
+```
+
+Figure 3  portrays the probability of voting based on education. Overall, we see a slight increase in the probability of voting as income increases, although it is not necessarily large. The figure below shows the distribution of the variable. The credible intervals for education are 0.29 and 0.47. The blue line represents the median centered around 0.378.
+
+
+### Poltical Intrest
+
+```{r, echo=FALSE}
+
+#poltical intrest mean probability distrubtuion
+g3 <- mcmc_areas(sims,
+           pars = c('intrest'),
+           prob = 0.9)
+#credible intervals
+#posterior_interval(mod_allin, pars = "intrest", prob = 0.89)
+
+effect_plot(mod_allin, 
+            pred = intrest,
+            interval = TRUE,
+            y.label = "Voting Probability ",
+            x.label = "Intrest",
+            main.title = "Figure 4",
+            line.thickness = .5)
+
+g3
+```
+
+
+
+Figure 4 portrays the probability of voting based on interest in politics. Overall, we see a slight increase in the probability of voting as interest increases, although it is not necessarily large. The figure below shows the distribution of the variable. The credible intervals for education are 1.33 and 1.82. The blue line represents the median centered around 1.572.
+
+### Recruitmemnt
+
+```{r, echo=FALSE}
+
+#reqruitment mean probability distrubtuion
+g4 <- mcmc_areas(sims,
+           pars = c('reqr'),
+           prob = 0.9)
+
+#credible intervals
+#posterior_interval(mod_allin, pars = "reqr", prob = 0.89)
+
+effect_plot(mod_allin, 
+            pred = reqr,
+            interval = TRUE,
+            y.label = "Voting Probability ",
+            x.label = "recruited",
+            main.title = ".",
+            line.thickness = .5)
+
+
+g4
+```
+
+
+
+Figure 4 portrays the probability of voting based on if the individual is part of a political group. Overall, we see a slight increase in the probability of voting when they are involved, although it is not necessarily large. The figure below shows the distribution of the variable. The credible intervals for education are -0.015 and 0.12. The blue line represents the median centered around 0.079.
+
+
+
+```{r, echo=FALSE}
+color_scheme_set("purple")
+
+
+posterior <- as.matrix(mod_allin)
+
+plot_title <- ggtitle("Posterior distributions",
+                      "with medians and 80% intervals")
+mcmc_areas(posterior,
+           pars = c("income", "edu", "intrest", "reqr"),
+           prob = 0.8) + plot_title
+
+mcmc_areas(posterior,
+           pars = c("b[(Intercept) region:AND]", 
+                    "b[(Intercept) region:ARG]", 
+                    "b[(Intercept) region:GRC]", 
+                    "b[(Intercept) region:KEN]", 
+                    "b[(Intercept) region:MMR]", 
+                    "b[(Intercept) region:PER]", 
+                    "b[(Intercept) region:TJK]", 
+                    "b[(Intercept) region:ZWE]"),
+           prob = 0.8) + plot_title
+
+mcmc_areas(posterior,
+           pars = c("b[income region:AND]",
+                    "b[income region:ARG]",
+                    "b[income region:GRC]",
+                    "b[income region:KEN]",
+                    "b[income region:MMR]",
+                    "b[income region:PER]",
+                    "b[income region:TJK]",
+                    "b[income region:ZWE]"),
+           prob = 0.8) + plot_title
+
+mcmc_areas(posterior,
+           pars = c("b[edu region:AND]",
+                    "b[edu region:ARG]",
+                    "b[edu region:GRC]",
+                    "b[edu region:KEN]",
+                    "b[edu region:MMR]",
+                    "b[edu region:PER]",
+                    "b[edu region:TJK]",
+                    "b[edu region:ZWE]"),
+           prob = 0.8) + plot_title
+mcmc_areas(posterior,
+           pars = c("b[reqr region:AND]",
+                    "b[reqr region:ARG]",
+                    "b[reqr region:GRC]",
+                    "b[reqr region:KEN]",
+                    "b[reqr region:MMR]",
+                    "b[reqr region:PER]",
+                    "b[reqr region:TJK]",
+                    "b[reqr region:ZWE]"),
+           prob = 0.8) + plot_title
+
+```
+
+The figures above display the overall intercepts for each variable, followed by the intercepts and slopes for each county. It's evident that the intercepts vary dramatically across regions. This highlights the necessity to account for clustering by region. On the other hand, for the other variables, the regions appear to be in proximity to each other.
+
+
+
+```{r, include=FALSE}
+fits <- mod_allin %>%
+  as_tibble() %>%
+  rename(intercept = '(Intercept)') 
+# %>% select(-c(sigma)
+
+
+head(fits)
+
+#draws
+n_draws <- 4000
+alpha_level <- .15
+color_draws <- "grey60"
+color_mean <- "#3366FF"
+
+fits$`b[(Intercept) region:AND]`
+```
+
+
+
+
+
+
+```{r, include=FALSE}
+
+## no base for bayesian plots
+ggplot(clean) +
+  aes(x = income, y = voter) +
+  ylim(0,1.5) +
+  geom_point(
+    aes(x = `b[(Intercept) region:AND]`, y = `b[edu region:AND]`),
+    data = sample_n(fits, n_draws),
+    color = color_draws,
+    alpha = alpha_level
+  ) +
+  geom_point(
+    x = median(fits$`b[(Intercept) region:AND]`),
+    y = median(fits$`b[edu region:AND]`),
+    size = 1,
+    color = "purple"
+  ) +
+  geom_point() +
+  labs(x='Income',
+       y = 'Vote Turnout',
+       title = 'Figure 3')
+
+
+
+
+
+ggplot(clean) +
+  aes(x = edu, y = voter) +  
+  ylim(0, 1.5) +
+  geom_abline(
+    aes(intercept = intercept, slope = edu), 
+    data = sample_n(fits, n_draws),
+    color = color_draws,
+    alpha = alpha_level
+  ) +
+  geom_abline(
+    intercept = median(fits$intercept),
+    slope = median(fits$edu),  
+    size = 1,
+    color = "purple"
+  ) +
+  geom_point() +
+  labs(
+    x = 'Education',  
+    y = 'Vote Turnout',
+    title = 'Figure 3'
+  )
+
+
+
+ggplot(clean) +
+  aes(x = intrest, y = voter) +  
+  ylim(0, 1.5) +
+  geom_abline(
+    aes(intercept = intercept, slope = intrest), 
+    data = sample_n(fits, n_draws),
+    color = color_draws,
+    alpha = alpha_level
+  ) +
+  geom_abline(
+    intercept = median(fits$intercept),
+    slope = median(fits$intrest),  
+    size = 1,
+    color = "purple"
+  ) +
+  geom_point() +
+  labs(
+    x = 'Interest',  
+    y = 'Vote Turnout',
+    title = 'Figure 3'
+  )
+
+
+
+ggplot(clean) +
+  aes(x = reqr, y = voter) +  
+  ylim(0, 1.5) +
+  geom_abline(
+    aes(intercept = intercept, slope = reqr),  
+    data = sample_n(fits, n_draws),
+    color = color_draws,
+    alpha = alpha_level
+  ) +
+  geom_abline(
+    intercept = median(fits$intercept),
+    slope = median(fits$reqr),  
+    size = 1,
+    color = "purple"
+  ) +
+  geom_point() +
+  labs(
+    x = 'Recruitment',  
+    y = 'Vote Turnout',
+    title = 'Figure 3'
+  )
+
+
+
+```
+
+
+## Conclusion
+- Is clustering on country or continent an important factor that researchers should consider or not?
+- Should future researchers utilize random slopes, or are fixed effects sufficient?
+
+The analysis presented highlights the crucial importance of considering clustering by country or continent in research endeavors. The variability observed in income across countries underscores the necessity of accounting for such clustering, particularly in understanding factors like voter turnout. Future research should aim to provide more comprehensive visualizations to further emphasize the significance of accounting for country-level effects. Additionally, the question of whether to utilize random slopes or fixed effects warrants further investigation to determine the most appropriate approach for modeling such complex relationships.
+
