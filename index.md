@@ -14,6 +14,23 @@ Hi, I'm Adaline Powell! Currently I am a master’s student in data science at U
 
 <div style="display:flex; justify-content:center; gap:30px; flex-wrap:wrap; margin-top:20px;">
 
+<!-- Negotiation Project -->
+  <a href="negotiations.html" style="text-decoration:none;">
+    <img 
+      src="variableimportance.png" 
+      alt="Predicting Negotiations"
+      style="
+        width:250px; 
+        border-radius:10px; 
+        filter:grayscale(100%);
+        transition: all 0.3s ease;
+        box-shadow:0 4px 8px rgba(0,0,0,0.15);
+      "
+      onmouseover="this.style.filter='grayscale(0%)'; this.style.transform='scale(1.03)';"
+      onmouseout="this.style.filter='grayscale(100%)'; this.style.transform='scale(1)';"
+    />
+  </a>
+
   <!-- PulseML Project -->
   <a href="variableimportance.html" style="text-decoration:none;">
     <img 
