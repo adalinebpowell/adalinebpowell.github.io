@@ -92,6 +92,15 @@ h1, h2, h3 {
   <a href="projects.html">Projects</a>
 </nav>
 
+<!-- TOP RIGHT ICON BAR -->
+<div class="icon-bar">
+  <a href="mailto:adalinebrynnpowell@gmail.com" class="icon-link" title="Email Me">
+    <img src="https://cdn-icons-png.flaticon.com/512/561/561127.png" alt="Email" class="icon-img">
+  </a>
+  <a href="https://www.linkedin.com/in/adaline-powell177/" class="icon-link" title="LinkedIn" target="_blank">
+    <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" alt="LinkedIn" class="icon-img">
+  </a>
+</div>
 
 <!-- PROFILE IMAGE -->
 <img src="profile.png"
