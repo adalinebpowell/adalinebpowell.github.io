@@ -62,16 +62,17 @@ nav a:hover {
 
 # About Me
 
-I am a data-driven thinker with an unconventional path into data science. I started in **philosophy** and **political science**, earned an **MA in Political Science**, completed a **certificate in Quantitative Social Data Analysis**, and now I’m a **master’s student in Data Science at UW–Milwaukee**.  
-That mix of theory, modeling, and applied analytics gives me a perspective that’s a little different. I understand how people and institutions behave—and I know how to analyze, model, and interpret the data behind those behaviors. :contentReference[oaicite:1]{index=1}
+I am a data driven individual who is always looking for interesting questions to answer. Much of my work is theory driven, where I focus on understanding people, institutions, and the dynamics behind behavior. I ask how and why something is happening and what it means in a broader context. At the same time, my training is also predictive, where I focus on detecting patterns, coding, and the technical side of problem solving. I ask what the patterns are, whether we can predict them, and how accurate those predictions can be. 
 
-I’ve worked across research, analytics, and even sales roles, building surveys, analyzing nonprofit financial patterns, mapping crisis-call hotspots, studying political behavior, building CRM systems, producing scenario analyses, and translating findings into insights people can actually use. I’ve used tools like **R, SPSS, ArcGIS, Python, and SQL**, and I love work that blends technical depth with real-world impact. :contentReference[oaicite:2]{index=2}
+That mix of theory, modeling, and applied analytics gives me a perspective that’s a little different. I understand how people and institutions behave—and I know how to analyze, model, and interpret the data behind those behaviors. 
+
+I’ve worked across research, analytics, and even sales roles, building surveys, analyzing nonprofit financial patterns, mapping crisis-call hotspots, studying political behavior, building CRM systems, producing scenario analyses, and translating findings into insights people can actually use. I’ve used tools like R, SPSS, ArcGIS, Python, and SQL, and I love work that blends technical depth with real-world impact. 
 
 Right now, I’m working on two major projects:  
-• **YouTube gaming engagement modeling** — exploring what makes certain videos take off using metadata patterns, language cues, thumbnails, and behavioral metrics.  
-• **Foundation strategy research** — assessing how foundations respond to political and economic uncertainty and how they communicate those decisions publicly.
+- Analyzing YouTube gaming engagement to understand what makes certain videos stand out—using statistical modeling, feature engineering, and machine learning to identify the strongest engagement predictors.  
+- Studying how philanthropic foundations respond to political and economic uncertainty, including how they communicate publicly through statements, themes, and strategy choices.
 
-Outside of research, I’m a **student-athlete on the UW–Milwaukee women’s track & field team**. Balancing training, coursework, and work has taught me discipline, structure, and how to operate under pressure. (Airport security is always exciting with the metal rods in my shins.) :contentReference[oaicite:3]{index=3}
+In addition to my academic and research work, I am also a student athlete on the UW Milwaukee women’s track and field team. This experience has shaped my work ethic, discipline, and ability to manage time effectively while balancing demanding commitments.
 
 I love learning, building, and uncovering the story behind the numbers. One quote that has always stayed with me is:
 
