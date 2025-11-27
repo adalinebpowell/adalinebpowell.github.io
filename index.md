@@ -124,8 +124,8 @@ h1, h2, h3 {
 </div>
 
 <!-- PROFILE IMAGE -->
-<img src="profile.png"
-     width="250"
+<img src="photodata.png"
+     width="700"
      alt="Adaline Powell"
      style="border-radius: 50%; display: block; margin: 50px auto; box-shadow:0 6px 12px rgba(75, 54, 33, 0.18);" />
 
