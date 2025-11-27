@@ -1,8 +1,16 @@
 ---
 title: "Adaline Powell"
-website: 
-  title: ""
-  navbar: false
+project:
+  type: website
+
+website:
+  title: ""        # removes the blue text
+  navbar: false    # disables Quarto's navbar completely
+
+format:
+  html:
+    theme: none
+
 ---
 
 <style>
