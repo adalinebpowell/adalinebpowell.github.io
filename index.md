@@ -57,37 +57,8 @@ body {
   transform:scale(1.1);
 }
 
-/* TWO-COLUMN HERO LAYOUT */
-.hero {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 50px;
-  margin-top: 80px;
-  padding: 20px;
-  flex-wrap: wrap; /* responsive for mobile */
-  text-align: left; /* text aligns left instead of center */
-}
-
-.hero-left {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.hero-right {
-  flex: 1;
-  max-width: 600px;
-}
-
-.hero-right h1 {
-  text-align: left;
-}
-
-.hero-right p {
-  font-size: 18px;
-  margin-bottom: 15px;
-}
+/* HERO SECTION */ .hero { text-align:center; margin-top:60px; } .hero-img { width:400px; border-radius:50%; box-shadow:0 6px 12px rgba(75,54,33,0.2); } .hero-title { font-size:48px; font-weight:800; margin-top:25px; } .hero-subtitle { font-size:22px; color:#6a4c33; margin-bottom:20px; }
+  
 .resume-btn {
   background:#7a5c3d;
   padding:12px 20px;
@@ -203,26 +174,8 @@ body {
   </a>
 </div>
 
-<!-- ========== HERO SECTION (TWO COLUMN) ========== -->
-<section class="hero">
-
-  <div class="hero-left">
-    <img src="photodata.png" alt="Adaline Powell" class="hero-img">
-  </div>
-
-  <div class="hero-right">
-    <h1 class="hero-title">Adaline Powell</h1>
-    <p class="hero-subtitle">Data Scientist • Political Scientist • Researcher</p>
-
-    <p>
-      Thanks for checking out my personal website!  
-      Feel free to reach out to me via email or LinkedIn with any questions or just to chat!
-    </p>
-
-    <a href="resume.pdf" target="_blank" class="resume-btn">Download Résumé</a>
-  </div>
-
-</section>
+<!-- ========== HERO SECTION ========== --> 
+<section class="hero"> <img src="photodata.png" alt="Adaline Powell" class="hero-img"> <h1 class="hero-title">Adaline Powell</h1> <p class="hero-subtitle">Data Scientist •Political Scientist • Researcher</p> <p> Thanks for checking out my personal website! Feel free to reach out to me via email or LinkedIn with any questions or just to chat! </p> <a href="resume.pdf" target="_blank" class="resume-btn">Download Résumé</a> </section> <hr class="hr-cute">
 
 
 
