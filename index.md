@@ -207,9 +207,7 @@ body {
 <section class="about">
   <h2>Welcome</h2>
   <p>
-    I’m a political scientist and data scientist with experience in
-    statistical modeling, spatial analysis, and data visualization.
-    I use R, Python, ArcGIS, and machine learning techniques to answer complex questions.
+    Thanks for checking out my personal website! Feel free to reach out to me via email or LinkedIn with any questions or just to chat!
   </p>
 </section>
 
