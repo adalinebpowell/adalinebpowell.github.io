@@ -86,15 +86,15 @@ h1, h2, h3 {
 
 
 <!-- PROFILE IMAGE -->
-<img src="https://media.licdn.com/dms/image/v2/D5603AQEHjz5RR88hHg/profile-displayphoto-crop_800_800/B56ZmENjc9J0AI-/0/1758859771265?e=1764201600&v=beta&t=YTDNeqb6IpxfrjRsmodOAAmIZbsG44KM6HNE8fsvtms" 
-     width="250" 
-     alt="Adaline Powell" 
+<img src="profile.png"
+     width="250"
+     alt="Adaline Powell"
      style="border-radius: 50%; display: block; margin: 50px auto; box-shadow:0 6px 12px rgba(75, 54, 33, 0.18);" />
+
 
 # Welcome
 
 Hi, I'm Adaline Powell!  
-I am a Master’s student in Data Science at UW–Milwaukee.  
 
 This site highlights my projects, visualizations, and research work!
 
