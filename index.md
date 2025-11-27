@@ -1,5 +1,8 @@
 ---
 title: "Adaline Powell"
+website: 
+  title: ""
+  navbar: false
 ---
 
 <style>
@@ -90,10 +93,10 @@ h1, h2, h3 {
 
 # Welcome
 
-Hi, I'm **Adaline Powell**!  
+Hi, I'm Adaline Powell!  
 I am a Master’s student in Data Science at UW–Milwaukee.  
 
-This site highlights my **projects, visualizations, and research work**, all centered around data science, analytics, and machine learning.
+This site highlights my projects, visualizations, and research work!
 
 <h2 style="text-align:center; margin-top:40px;">Featured Projects</h2>
 
