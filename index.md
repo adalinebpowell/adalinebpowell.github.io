@@ -225,27 +225,6 @@ body {
 </section>
 
 
-<!-- ========== PROJECTS ========== -->
-<h2 style="text-align:center;">Featured Projects</h2>
-
-<div class="projects-grid">
-  <a href="negotiations.html">
-    <img src="cow.png" class="project-img">
-    <div class="project-caption">Predicting Negotiation Outcomes</div>
-  </a>
-
-  <a href="variableimportance.html">
-    <img src="variableimportance.png" class="project-img">
-    <div class="project-caption">Variable Importance ML Visualization</div>
-  </a>
-
-  <a href="Missingness.html">
-    <img src="missingness.png" class="project-img">
-    <div class="project-caption">Missingness Diagnostics</div>
-  </a>
-</div>
-
-<hr class="hr-cute">
 
 <!-- ========== SKILLS ========== -->
 <h2 style="text-align:center;">Skills & Tools</h2>
