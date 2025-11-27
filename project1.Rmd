@@ -1,0 +1,520 @@
+---
+title: "Education, Religion, and Ideology: A Two-Part Analysis Using ANES Data"
+author: "Adaline Powell"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    theme:
+      version: 5
+      primary: "#8B5E3C"     # warm brown
+      secondary: "#D2B48C"   # tan
+      success: "#C19A6B"
+      info: "#E6D5C3"
+      warning: "#A97458"
+      danger: "#5C4033"
+    highlight: tango
+    css: styles.css
+---
+
+### Executive Summary
+
+This lab examines how education relates to ideology across different religious groups and whether education better predicts personal ideology or perceptions of party ideology. Using ANES data, I first compare Christians, Muslims, and those without a religion to see if education influences ideology in the same way across these groups. I then test whether education more strongly predicts individuals’ own ideological positions or their views of their party’s ideology.
+
+The results suggest that the relationship between education and ideology varies by religion. Atheists and agnostics become more liberal as education increases, while Christians and Muslims tend to shift toward more moderate positions with higher education. In the second section, the model predicting personal ideology performs better than the models predicting party ideology, indicating that education is a stronger predictor of an individual’s personal ideological leanings than their perception of party ideology.
+
+# Introduction
+
+Educational status is among the few variables known to influence and shape perspectives. Scholars commonly explore education's role when studying party identifications, ideology, and other variables within the political science discourse. However, questions arise regarding the educational impact on these variables, particularly within subgroups. Furthermore, are we observing similar effects of education when narrowing our focus to these subgroups?
+
+The aim of this study/lab is to offer preliminary insights into this question. The lab will be divided into two sections. The first section will assess the relationship between education and ideology among religious subgroups: Christians, Muslims, and those without a religious affiliation. The second section will evaluate how effectively education predicts personal ideology and the ideology aligned with respondents' political parties. This comparison aims to suggest which variable education better predicts. 
+
+**Question 1** Whether the relationship between education and ideology function in the same way for Christians, Muslims, and those without a religion? 
+
+**Question 2** Is education a better predictor of personal ideology or of the ideology of their political party?
+
+
+
+```{r, include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(effects)
+library(sjPlot)
+library(patchwork)
+library(pander)
+library(dplyr)
+library(readstata13)
+library(haven)
+library(corrplot)
+
+
+anes <- read.csv("~/Desktop/anes_timeseries_2020_csv_20220210/anes_timeseries_2020_csv_20220210.csv")
+#View(anes)
+table(anes$V201510)
+table(anes$V201511x)
+
+
+```
+
+### Data
+I will be using data from the ANES dataset, a widely used resource that offers information on the behaviors, attitudes, and demographics of the American public.
+
+
+
+```{r, include=FALSE}
+##New data set
+anes_clean <- data.frame(matrix(NA, nrow = 8280, ncol = 0))
+
+#View(anes_clean)
+
+```
+
+
+
+```{r, include=FALSE}
+
+#Creating Ideology variable
+anes_clean$ide <- NA
+
+
+
+anes_clean$ide[anes$V201200 == 1] <- -3
+anes_clean$ide[anes$V201200 == 2] <- -2 #liberal
+anes_clean$ide[anes$V201200 == 3] <- -1
+anes_clean$ide[anes$V201200 == 4] <- 0
+anes_clean$ide[anes$V201200 == 5] <- 1
+anes_clean$ide[anes$V201200 == 6] <- 2
+anes_clean$ide[anes$V201200 == 7] <- 3
+
+#table(anes_clean$ide)
+#table(anes$V201200, anes_clean$ide)
+```
+
+
+```{r, include=FALSE}
+
+## creating party variable
+anes_clean$pd <- NA
+
+table(anes$V201228)
+
+anes_clean$pd[anes$V201228 == 1] <- "Democrat"
+anes_clean$pd[anes$V201228 == 2] <- "Republican"
+anes_clean$pd[anes$V201228 == 3] <- "1 Independent"
+
+table(anes_clean$pd)
+table(anes$V201228, anes_clean$pd)
+
+
+```
+
+
+```{r, include=FALSE}
+##education variable
+
+anes_clean$edu <- NA
+## Creating a ordinal measurmeent 5 point scale, 1 is lower/less educational status, and 5 being the highest educational status
+
+anes_clean$edu[anes$V201511x == 1] <- 1 #less then hs
+anes_clean$edu[anes$V201511x == 2] <- 2 #high
+anes_clean$edu[anes$V201511x == 3] <- 3 #post h no ba
+anes_clean$edu[anes$V201511x == 4] <- 4 # ba
+anes_clean$edu[anes$V201511x == 5] <- 5 # grad
+
+##labels verision easier to look at
+anes_clean$educ <- NA
+anes_clean$educ[anes$V201511x == 1] <- "< Highschool"
+anes_clean$educ[anes$V201511x == 2] <- "Highschool"
+anes_clean$educ[anes$V201511x == 3] <- "Post Highschoool (no BA)" #post h no ba
+anes_clean$educ[anes$V201511x == 4] <- "Bachelors"
+anes_clean$educ[anes$V201511x == 5] <- "Graduate" # grad
+
+
+```
+
+
+
+
+
+```{r, include=FALSE}
+##religion vairable
+#V201435
+anes_clean$religion <- NA
+
+##what considering those without religoin, i consider without relgion to be atheusts or agnostic
+
+anes_clean$religion[anes$V201435 == 6] <- "Muslim"
+anes_clean$religion[anes$V201435 == 9] <- "Atheist/Agnostic"
+anes_clean$religion[anes$V201435 == 10] <- "Atheist/Agnostic"
+anes_clean$religion[anes$V201435 == 1] <- "Christian" # prot
+anes_clean$religion[anes$V201435 == 2] <- "Christian"#roman
+anes_clean$religion[anes$V201435 == 3] <- "Christian"#ortho
+
+
+```
+
+
+
+
+```{r, include=FALSE}
+##poltical party idelogy
+#V201206
+
+
+anes_clean$demID <- NA
+
+anes_clean$demID[anes$V201206 == 1] <- -3
+anes_clean$demID[anes$V201206 == 2] <- -2
+anes_clean$demID[anes$V201206 == 3] <- -1
+anes_clean$demID[anes$V201206 == 4] <- 0
+anes_clean$demID[anes$V201206 == 5] <- 1
+anes_clean$demID[anes$V201206 == 6] <- 2
+anes_clean$demID[anes$V201206 == 7] <- 3
+table(anes_clean$demID, anes$V201206)
+
+
+anes_clean$repID <- NA
+
+#V201207
+anes_clean$repID[anes$V201207 == 1] <- -3
+anes_clean$repID[anes$V201207 == 2] <- -2
+anes_clean$repID[anes$V201207 == 3] <- -1
+anes_clean$repID[anes$V201207 == 4] <- 0
+anes_clean$repID[anes$V201207 == 5] <- 1
+anes_clean$repID[anes$V201207 == 6] <- 2
+anes_clean$repID[anes$V201207 == 7] <- 3
+table(anes_clean$repID, anes$V201207)
+
+```
+
+#### Variable Selection
+
+To assess ideology, I utilize V201200 in the ANES dataset. I have coded this variable on a 7-point scale, with -3 representing extremely liberal and 3 being extremely conservative. I will also be creating a party variable using V201228 to represent whether the respondent identifies as a Democrat, Republican, or Independent. I will be using the variable V201511x to represent educational status. I have coded this variable as an ordinal measurement, where 1 indicates a lower educational status (Less than High School), and 5 represents a higher educational status (Graduate degree). My religion variable is constructed using V201435 from the ANES dataset. I have coded this variable to include only Muslims, Atheists/Agnostics, and Christians. The ANES dataset contains two variables indicating the perceived party ideology of each participant. I coded both variables, (Democrat: V201206, Republican: V201207), similarly to my original ideology variable, using a 7-point scale where -3 represents extremely liberal, and 3 signifies extremely conservative positions  
+
+#### Distrubtion of Variables
+
+```{r, echo=FALSE}
+
+f1<-ggplot(data = subset(anes_clean, !is.na(educ)), 
+       aes(x=educ, na.rm = T)) +
+  labs(x = "Education") +
+    theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
+  ggtitle("Figure 1 ") +
+  geom_bar()
+
+f2<- ggplot(data = subset(anes_clean, !is.na(ide)), 
+       aes(x=ide, na.rm = T)) +
+  labs(x = "Ideology") +
+  ggtitle("Figure 2 ") +
+  geom_bar()
+
+f3<-ggplot(data = subset(anes_clean, !is.na(religion)), 
+       aes(x=religion, na.rm = T)) +
+  labs(x = "Religion") +
+  ggtitle("Figure 3 ") + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
+  geom_bar()
+
+
+f4<- ggplot(data = subset(anes_clean, !is.na(pd)), 
+       aes(x=pd, na.rm = T)) +
+  labs(x = "Party") +
+  ggtitle("Figure 4") +
+  geom_bar()
+f1 + f2 + f3 +f4
+
+
+f5<- ggplot(data = subset(anes_clean, !is.na(demID)), 
+       aes(x=demID, na.rm = T)) +
+  labs(x = "Democrat Ideology") +
+  ggtitle("Figure 7 ") +
+  geom_bar()
+
+f6<- ggplot(data = subset(anes_clean, !is.na(repID)), 
+       aes(x=repID, na.rm = T)) +
+  labs(x = "Republican Ideology") +
+  ggtitle("Figure 6 ") +
+  geom_bar()
+
+f5 + f6
+
+
+```
+
+
+Before proceeding with the analysis, it's important to assess the distribution of all variables. Figure one depicts the distribution of education within this sample. It seems that there are fewer individuals with an education level lower than high school. The majority of the data consists of individuals with a post-high school educational status, but less than a bachelor's or graduate degree.
+
+Turning to Figure 2, which illustrates ideology, it appears that most of the respondents hold moderate views. However, there are higher numbers of individuals who identify as either liberal or conservative (-2 and 2).
+
+Figure 3 presents the distribution of religious identities. The majority of participants identify with the Christian faith, while a very small number represent other religious identities.
+
+Regarding party identification in figure 4, it seems quite dispersed across the board, although there is a slightly higher number of Democrats.
+
+
+# Question 1
+
+
+**Does the relationship between education and ideology function in the same way for Christians, Muslims, and those without a religion?**
+
+
+```{r, echo=FALSE, warning=FALSE}
+ggplot(data = subset(anes_clean, !is.na(religion), !is.na(ide)), 
+      aes(x = educ, y = ide, fill = religion, na.rm = T)) +
+  labs(x = "Education", y = "Ideology") +
+  ggtitle("Figure 5 ") + 
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust=1)) +
+      geom_boxplot(alpha = .3)  
+```
+
+### Checking Regression Assumptions
+```{r, echo=FALSE}
+#build model check assumtions
+mod_1 <- lm(ide ~ edu*religion, anes_clean)
+
+
+par(mfrow = c(1,2))
+plot(mod_1, which=1:2)
+
+```
+
+
+
+To ensure that a linear regression is appropriate for this data, I need to check the assumptions of the model. Firstly, I'll examine normality, which I believe my data satisfies as most of the points align closely with the line. Checking for linearity, I'll refer to the Residuals vs Fitted plot and examine the red line. A perfectly straight line indicates a linear relationship. Regarding constant variance, the data doesn't strongly demonstrate this, as deviatiosn downwards appear towards the right side of the plot. Moving forward, it's crucial to consider the violations of these assumptions when drawing conclusions based on the analysis.
+
+### Model
+
+```{r, echo=FALSE}
+plot(allEffects(mod_1), main= c("Figure 6"), xlab="Education", ylab="Ideology")
+
+#summary(mod_1)
+tab_model(mod_1, title= "Table 1",
+           p.style = "stars",
+         dv.labels = c("Ideology"),
+         terms = c("(Intercept)",
+                   "edu",
+                   "religionChristian",
+                   "religionMuslim",
+                   "edu:religionChristian",
+                   "edu:religionMuslim"),
+         pred.labels = c("Y-Intercept",
+                         "Education",
+                         "Religion (Christian)",
+                         "Religion (Muslim)",
+                         "Education:Christian",
+                         "Education:Muslim"),
+          emph.p = F,
+          p.adjust = "fdr") 
+```
+
+Table one presents the Regression Analysis for Study One, while Figure 6 shows the graphical analysis. The primary focus within table one lies in the interaction effects located at the bottom of the table. The intercept can be interpreted to include Atheists and agnostics who lean closer to a liberal ideology (-0.40). When examining the interaction effects between Christians and education, the coefficient increases by 0.04. This suggests that Christians tend to have higher ideological preferences compared to atheists and agnostics. Shifting to Muslims, the coefficient is significantly larger than that of atheists and agnostics by 0.33. This indicates stronger ideological preferences among Muslims than among atheists and agnostics. 
+
+Looking at figure six, we get a clearer image of the interaction effects based on religion. Atheists and agnostics tend to exhibit ideological preferences leaning closer to the liberal side. It seems that as educational status increases, these preferences tend to lean towards stronger liberal inclinations. Although Christians display more conservative ideological preferences initially, as educational status increases, their preferences tend to shift more towards moderate ideologies. However, Muslims depict a notably different effect. Most of the Muslims are centered around moderate –liberal positions. With an increase in educational status, there is a slight shift in ideological preferences leaning closer to a moderate standpoint. 
+
+### Discusion
+
+Why might we observe these differences among these various religious groups? The disparity between liberal and conservative preferences is rooted in their connection with traditions and values. Conservatives typically favor adhering to established traditions, while liberals tend to be more open to embracing new ideas and evolving traditions. 
+
+One plausible explanation for atheists and agnostics leaning towards more liberal ideologies as their education increases could be the substantial influx of new information and education they acquire. This exposure to new ideas likely encourages them to challenge established traditions and norms, ultimately shaping their leaning towards more liberal viewpoints. As they gain more knowledge and diverse perspectives, their inclination towards questioning traditional beliefs and embracing progressive ideas might intensify. 
+
+A plausible explanation for the effect observed among Christians and Muslims stems from a similar argument. As they acquire more information and education, they may become less inclined to support established or traditional norms and values. Consequently, this increased exposure to diverse perspectives and knowledge might lead them to adopt a more moderate stance, being less rigidly tied to traditional beliefs and more open to a range of viewpoints. This evolving perspective may contribute to a shift towards a more moderate ideological position. 
+
+# Question 2
+
+**Is education a better predictor of personal ideology or of the ideology of their political party?**
+
+```{r, include=FALSE}
+dem_md<- lm(demID ~ edu*pd, anes_clean)
+rep_md<- lm(repID ~ edu*pd, anes_clean)
+per_md<- lm(ide ~ edu*pd, anes_clean)
+
+
+
+```
+
+
+```{r, include=FALSE}
+plot(allEffects(dem_md), main= c("Figure 6"), xlab="Education", ylab="Democrat Ideology")
+summary(dem_md)
+tab_model(dem_md, title= "Table 2",
+           p.style = "stars",
+         dv.labels = c("Democrat Party Ideology"),
+         pred.labels = c("Y-Intercept",
+                         "Education",
+                         "Democrat",
+                         "Republican",
+                         "Education:Democrat",
+                         "Education:Republican"),
+          emph.p = F,
+          p.adjust = "fdr")
+
+```
+
+
+
+```{r, include=FALSE}
+plot(allEffects(rep_md), main= c("Figure 6"), xlab="Education", ylab="Repulican Ideology")
+summary(rep_md)
+tab_model(rep_md, title= "Table 3",
+           p.style = "stars",
+         dv.labels = c("Republican Party Ideology"),
+         pred.labels = c("Y-Intercept",
+                         "Education",
+                         "Democrat",
+                         "Republican",
+                         "Education:Democrat",
+                         "Education:Republican"),
+          emph.p = F,
+          p.adjust = "fdr")
+```
+
+
+```{r, include=FALSE}
+plot(allEffects(per_md), main= c("Figure 6"), xlab="Education", ylab="Personal Ideology")
+#summary(per_md)
+tab_model(per_md, title= "Table 4",
+           p.style = "stars",
+         dv.labels = c("Personal Ideology"),
+         pred.labels = c("Y-Intercept",
+                         "Education",
+                         "Democrat",
+                         "Republican",
+                         "Education:Democrat",
+                         "Education:Republican"),
+          emph.p = F,
+          p.adjust = "fdr")
+```
+
+
+
+```{r, include=FALSE}
+cor.test(anes_clean$demID, anes_clean$edu)
+cor.test(anes_clean$repID, anes_clean$edu)
+cor.test(anes_clean$ide, anes_clean$edu)
+
+
+
+b <- c(which(colnames(anes_clean)=="edu"),
+       which(colnames(anes_clean)=="repID"),
+            which(colnames(anes_clean)=="ide"),
+            which(colnames(anes_clean)=="demID")
+            )
+b
+
+c <- cor(anes_clean[, c(b)], use="pairwise.complete.obs")
+c
+
+rownames(c) <- c("edu",
+                 "Republican",
+                 "Personal",
+                 "Democrat")
+
+
+colnames(c) <- c("Education",
+                 "REP",
+                 "PER",
+                 "DEM")
+
+ 
+```
+
+
+## Correlation
+```{r, echo=FALSE}
+corrplot(c, 
+         method = "color",
+         tl.col = "Black",         
+         addCoef.col = 1.5,         
+         number.cex = 1.5,        
+         cl.cex = 2,         
+         tl.srt = 45,       
+         diag = FALSE,         
+         type = 'lower',        
+         cl.pos = "n",         
+         tl.cex = 2)
+
+```
+
+Before proceeding with the regression analysis, I conducted an examination of how the variables interacted with each other and the strength of the correlations among them. It's important to note that the Republican and Democrat ideological variables ask all participants about their perception of each party's ideology. Furthermore, this correlation matrix does not directly answer my overarching question but provides a primary understanding of how the variable as a whole relates to education status. 
+
+ This correlation matrix aims to illustrate the relationships between the variables. Specifically, it helps identify correlations closer to |1|, signifying a stronger relationship. I observed that the variable asking participants' perceptions of the Republican Party ideology displays a moderately positive relationship with education. Conversely, the Democratic variable demonstrates a slightly moderate, negative relationship with education. 
+
+## Assumptions
+
+Democrat Party Ideology
+
+
+```{r, echo=FALSE}
+dem_md<- lm(demID ~ edu*pd, anes_clean)
+rep_md<- lm(repID ~ edu*pd, anes_clean)
+per_md<- lm(ide ~ edu*pd, anes_clean)
+
+
+
+par(mfrow = c(1,2))
+plot(dem_md, which=1:2)
+
+```
+
+
+Republican Party Ideology
+
+
+
+```{r, echo=FALSE}
+par(mfrow = c(1,2))
+
+plot(rep_md, which=1:2)
+
+```
+
+
+Personal Ideology
+
+
+```{r, echo=FALSE}
+par(mfrow = c(1,2))
+
+plot(per_md, which=1:2)
+```
+
+
+All three graphs assessing the assumptions of a residual regression analysis reveal violations. Although each residual versus fitted plot showcases a linear red line, it may not perfectly align on the dotted line. Across all plots, the data appears to deviate from a normal distribution, and there is a noticeable decline towards the right side of each graph. Furthermore, upon examining the Q residual plot, it's evident that the data does not precisely adhere to the dotted line as expected. These violations suggest deviations from the assumptions required for a valid regression analysis, therefore we must procedded with caution. 
+
+## Model
+
+```{r, echo=FALSE}
+plot(allEffects(dem_md), main= c("Figure 7"), xlab="Education", ylab="Democrat Ideology")
+plot(allEffects(rep_md), main= c("Figure 8"), xlab="Education", ylab="Repulican Ideology")
+
+plot(allEffects(per_md), main= c("Figure 9"), xlab="Education", ylab="Personal Ideology")
+
+tab_model(dem_md, rep_md, per_md, title= "Table 2",
+           p.style = "stars",
+         dv.labels = c("Democrat Party ID", "Republican Party ID", "Personal ID"),
+         pred.labels = c("Y-Intercept",
+                         "Education",
+                         "Democrat",
+                         "Republican",
+                         "Education:Democrat",
+                         "Education:Republican"),
+          emph.p = F,
+          p.adjust = "fdr")
+```
+
+
+In Figure seven, our focus should be directed towards the middle graphic, depicting Democrats' perceptions of the Democratic ideology. As the educational status of Democrats increases, their perception of the Democratic ideology decreases. Furthermore, as their educational attainment rises, their perception tends to lean towards more liberal preferences regarding the Democratic ideology. 
+
+Shifting attention to Figure eight, our focus should be on the rightmost graphic, involving Republicans' perceptions of the Republican ideology. It appears that as educational status increases among Republicans, their perceptions of the party ideology also increase. Moreover, with an increase in educational attainment, the Republican Party ideology tends to thought of as more conservative. 
+
+Moving to Figure nine, which illustrates personal ideology, our attention should be directed towards the last two graphics, encompassing Democrats and Republicans. Among Democrats responding to this question, we observe that as their educational status increases, their personal ideology decreases, leaning towards a more liberal standpoint. Regarding Republicans, as their educational status rises, there is a slight, although not dramatic, increase in personal ideology, tending towards a more conservative position. 
+
+Comparing the three models, it's evident that the personal ideology model exhibits a higher adjusted R-square value of 0.50. This indicates that the model accounts for 50% of the variance in personal ideology. Significantly, this R-squared value is notably higher than those of both the Democrat and Republican models.
+
+Furthermore, upon examining the coefficients of the interaction effects, it's apparent that they are statistically significant in both the Democrat and Republican models.
+
+# Discussion
+
+Considering these findings, it suggests that education as a predictor does a better job of explaining and predicting an individual's personal ideology compared to their party ideology. The higher R-square value and significant coefficients in the personal ideology model indicate that education is a stronger predictor of an individual's ideological preferences than their affiliation with a particular political party.
+
+### Further Research
+
+Further research should aim to explore whether the influence of education in predicting personal ideology compared to party ideology is consistent across different religious groups. Additionally, future studies should replicate these findings in religious groups that were not originally included in this study. Examining whether similar patterns exist or diverge among religious groups not previously analyzed would provide further understanding of the impact of education on ideological across a spectrum of religious backgrounds.  
