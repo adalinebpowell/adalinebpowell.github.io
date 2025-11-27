@@ -197,7 +197,10 @@ body {
   <img src="photodata.png" alt="Adaline Powell" class="hero-img">
   <h1 class="hero-title">Adaline Powell</h1>
   <p class="hero-subtitle">Data Scientist •Political Scientist • Researcher</p>
-
+  <h2>Welcome</h2>
+  <p>
+    Thanks for checking out my personal website! Feel free to reach out to me via email or LinkedIn with any questions or just to chat!
+  </p>
   <a href="resume.pdf" target="_blank" class="resume-btn">Download Résumé</a>
 </section>
 
