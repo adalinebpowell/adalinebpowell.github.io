@@ -1,5 +1,5 @@
 ---
-title: "Work History"
+title: "About Me"
 website:
   title: ""
   navbar: false
@@ -40,54 +40,38 @@ nav a:hover {
   padding-bottom:3px;
 }
 
-/* Job Boxes */
-.job-box {
-  background: #fff9f3;
-  border: 2px solid #d7c3a3;
-  border-radius: 16px;
-  padding: 25px;
-  margin: 25px auto;
-  max-width: 800px;
-  box-shadow: 0 6px 12px rgba(75,54,33,0.12);
-  transition: 0.3s ease;
-}
-
-.job-box:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 18px rgba(75,54,33,0.18);
-}
-
-.job-title {
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.job-company {
-  font-size: 20px;
-  font-weight: 600;
-  color:#7a5c3d;
-  margin-bottom: 4px;
-}
-
-.job-time {
-  font-size: 16px;
-  color:#5f4630;
-  opacity: 0.85;
-  margin-bottom: 15px;
-}
-
-ul {
-  margin-top: 0;
-  padding-left: 20px;
-}
+/* Cute Divider */
 .hr-cute {
   border:0;
   height:2px;
   width:60%;
   background:#d7c3a3;
-  margin:40px auto;
+  margin:30px auto 40px auto;
   border-radius:50px;
+}
+
+/* About Me Box */
+.about-box {
+  background: #fff9f3;
+  border: 2px solid #d7c3a3;
+  border-radius: 18px;
+  padding: 30px;
+  max-width: 850px;
+  margin: 40px auto;
+  box-shadow: 0 6px 12px rgba(75,54,33,0.12);
+  transition: 0.3s ease;
+}
+.about-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 18px rgba(75,54,33,0.18);
+}
+
+.about-title {
+  text-align:center;
+  font-size:28px;
+  font-weight:700;
+  margin-bottom:15px;
+  color:#4b3621;
 }
 </style>
 
@@ -100,27 +84,38 @@ ul {
   <a href="projects.html">Projects</a>
 </nav>
 
-<h1 style="text-align:center; margin-top:40px;"> Work History</h1>
+<h1 style="text-align:center; margin-top:40px;"> About Me </h1>
 <hr class="hr-cute">
 
+<div class="about-box">
 
+I am a data-driven individual who is always looking for interesting questions to answer. Much of my work is theory-driven, where I focus on understanding people, institutions, and the dynamics behind behavior. I ask how and why something is happening and what it means in a broader context. At the same time, my training is also predictive, where I focus on detecting patterns, coding, and the technical side of problem solving. I ask what the patterns are, whether we can predict them, and how accurate those predictions can be.
 
+<br><br>
 
-I am a data driven individual who is always looking for interesting questions to answer. Much of my work is theory driven, where I focus on understanding people, institutions, and the dynamics behind behavior. I ask how and why something is happening and what it means in a broader context. At the same time, my training is also predictive, where I focus on detecting patterns, coding, and the technical side of problem solving. I ask what the patterns are, whether we can predict them, and how accurate those predictions can be. 
+That mix of theory, modeling, and applied analytics gives me a perspective that’s a little different. I understand how people and institutions behave—and I know how to analyze, model, and interpret the data behind those behaviors.
 
-That mix of theory, modeling, and applied analytics gives me a perspective that’s a little different. I understand how people and institutions behave—and I know how to analyze, model, and interpret the data behind those behaviors. 
+<br><br>
 
-I’ve worked across research, analytics, and even sales roles, building surveys, analyzing nonprofit financial patterns, mapping crisis-call hotspots, studying political behavior, building CRM systems, producing scenario analyses, and translating findings into insights people can actually use. I’ve used tools like R, SPSS, ArcGIS, Python, and SQL, and I love work that blends technical depth with real-world impact. 
+I’ve worked across research, analytics, and even sales roles, building surveys, analyzing nonprofit financial patterns, mapping crisis-call hotspots, studying political behavior, building CRM systems, producing scenario analyses, and translating findings into insights people can use. I’ve used tools like R, SPSS, ArcGIS, Python, and SQL, and I love work that blends technical depth with real-world impact.
 
-Right now, I’m working on two major projects:  
-- Analyzing YouTube gaming engagement to understand what makes certain videos stand out—using statistical modeling, feature engineering, and machine learning to identify the strongest engagement predictors.  
-- Studying how philanthropic foundations respond to political and economic uncertainty, including how they communicate publicly through statements, themes, and strategy choices.
+<br><br>
 
-In addition to my academic and research work, I am also a student athlete on the UW Milwaukee women’s track and field team. This experience has shaped my work ethic, discipline, and ability to manage time effectively while balancing demanding commitments.
+<strong>Right now, I’m working on two major projects:</strong>
+<ul>
+  <li>Analyzing YouTube gaming engagement to understand what makes certain videos stand out—using statistical modeling, feature engineering, and machine learning.</li>
+  <li>Studying how philanthropic foundations respond to political and economic uncertainty, including how they communicate publicly through statements, themes, and strategic choices.</li>
+</ul>
+
+In addition to my academic and research work, I am also a student athlete on the UW–Milwaukee women’s track and field team. This experience has shaped my work ethic, discipline, and ability to manage time effectively while balancing demanding commitments.
+
+<br><br>
 
 I love learning, building, and uncovering the story behind the numbers. One quote that has always stayed with me is:
 
-> *“I know one thing: that I know nothing.”* — Socrates
+<blockquote>
+  <i>“I know one thing: that I know nothing.”</i> — Socrates
+</blockquote>
 
 It reminds me to stay curious, ask better questions, and keep growing.
 
@@ -130,6 +125,8 @@ It reminds me to stay curious, ask better questions, and keep growing.
        width="380"
        style="border-radius:12px; box-shadow:0 6px 12px rgba(75, 54, 33, 0.2); margin-top:20px;">
 </p>
+
+</div>
 
 <hr class="hr-cute">
 
