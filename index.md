@@ -80,6 +80,27 @@ h1, h2, h3 {
   margin:40px auto;
   border-radius:50px;
 }
+
+  .icon-bar {
+  position: absolute;
+  top: 85px;              /* adjust if needed depending on your nav height */
+  right: 40px;            /* moves icons to the right edge */
+  display: flex;
+  gap: 12px;
+  z-index: 2000;
+}
+
+.icon-img {
+  width: 28px;            /* small + clean */
+  height: 28px;
+  opacity: 0.85;
+  transition: 0.3s ease;
+}
+
+.icon-img:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
 </style>
 
 
