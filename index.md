@@ -275,5 +275,5 @@ body {
 <hr class="hr-cute">
 
 <footer class="footer">
-  © 2025 Adaline Powell • Data & Political Science
+  © 2025 Adaline Powell 
 </footer>
