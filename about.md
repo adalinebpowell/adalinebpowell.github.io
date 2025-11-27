@@ -1,3 +1,45 @@
+---
+title: "About me"
+website:
+  title: ""
+  navbar: false
+---
+
+<style>
+body {
+  background-color: #f7f3ee;
+  color: #4b3621;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  padding: 30px;
+}
+
+/* Navigation Bar */
+nav {
+  width:100%;
+  background:#7a5c3d;
+  padding:14px 0;
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  position:sticky;
+  top:0;
+  z-index:1000;
+  border-bottom: 2px solid #4b3621;
+}
+nav a {
+  color:#f7f3ee;
+  font-size:18px;
+  text-decoration:none;
+  font-weight:500;
+  transition:0.3s ease;
+}
+nav a:hover {
+  color:#e8dfd6;
+  border-bottom:2px solid #e8dfd6;
+  padding-bottom:3px;
+}
+
 # About Me
 
 I am a data driven individual who is always looking for interesting questions to answer. Much of my work is theory driven, where I focus on understanding people, institutions, and the dynamics behind behavior. I ask how and why something is happening and what it means in a broader context. At the same time, my training is also predictive, where I focus on detecting patterns, coding, and the technical side of problem solving. I ask what the patterns are, whether we can predict them, and how accurate those predictions can be. This combination is not something you see very often, and it allows me to approach problems from multiple lenses. I am able to bridge the world of theory and context with the world of coding, modeling, and pattern detection. 
