@@ -196,7 +196,7 @@ body {
 <section class="hero">
   <img src="photodata.png" alt="Adaline Powell" class="hero-img">
   <h1 class="hero-title">Adaline Powell</h1>
-  <p class="hero-subtitle">Political Scientist • Data Analyst • Researcher</p>
+  <p class="hero-subtitle">Data Scientist •Political Scientist • Researcher</p>
 
   <a href="resume.pdf" target="_blank" class="resume-btn">Download Résumé</a>
 </section>
@@ -207,10 +207,9 @@ body {
 <section class="about">
   <h2>Welcome</h2>
   <p>
-    I’m a political scientist and data analyst specializing in public opinion,
+    I’m a political scientist and data scientist with experience in
     statistical modeling, spatial analysis, and data visualization.
-    I use R, Python, ArcGIS, and machine learning techniques to study political
-    behavior, elections, and social systems.
+    I use R, Python, ArcGIS, and machine learning techniques to answer complex questions.
   </p>
 </section>
 
@@ -263,15 +262,6 @@ body {
     </ul>
   </div>
 
-  <div class="skill-card">
-    <h3>Visualization</h3>
-    <ul>
-      <li>ggplot2</li>
-      <li>Matplotlib / Seaborn</li>
-      <li>R Shiny</li>
-      <li>ArcGIS Mapping</li>
-    </ul>
-  </div>
 
   <div class="skill-card">
     <h3>Tools</h3>
@@ -279,7 +269,6 @@ body {
       <li>ArcGIS</li>
       <li>GitHub</li>
       <li>Quarto / R Markdown</li>
-      <li>Power BI</li>
       <li>SQL (Basic)</li>
     </ul>
   </div>
@@ -288,5 +277,5 @@ body {
 <hr class="hr-cute">
 
 <footer class="footer">
-  © 2025 Adaline Powell • Data Analysis & Political Science
+  © 2025 Adaline Powell • Data & Political Science
 </footer>
