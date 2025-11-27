@@ -49,6 +49,21 @@ nav a:hover {
   margin:30px auto 40px auto;
   border-radius:50px;
 }
+
+/* ABOUT ME BOX */
+.about-box {
+  background:#fff9f3;
+  border:2px solid #d7c3a3;
+  border-radius:16px;
+  padding:30px 35px;
+  max-width:850px;
+  margin:50px auto;
+  box-shadow:0 8px 16px rgba(75, 54, 33, 0.12);
+}
+.about-box h1 {
+  text-align:center;
+  margin-top:0;
+}
 </style>
 
 <!-- NAV BAR -->
@@ -60,4 +75,41 @@ nav a:hover {
   <a href="projects.html">Projects</a>
 </nav>
 
+<div class="about-box">
 
+
+I am a data driven individual who is always looking for interesting questions to answer. Much of my work is theory driven, where I focus on understanding people, institutions, and the dynamics behind behavior. I ask how and why something is happening and what it means in a broader context. At the same time, my training is also predictive, where I focus on detecting patterns, coding, and the technical side of problem solving. I ask what the patterns are, whether we can predict them, and how accurate those predictions can be. 
+
+That mix of theory, modeling, and applied analytics gives me a perspective that’s a little different. I understand how people and institutions behave—and I know how to analyze, model, and interpret the data behind those behaviors. 
+
+I’ve worked across research, analytics, and even sales roles, building surveys, analyzing nonprofit financial patterns, mapping crisis-call hotspots, studying political behavior, building CRM systems, producing scenario analyses, and translating findings into insights people can actually use. I’ve used tools like R, SPSS, ArcGIS, Python, and SQL, and I love work that blends technical depth with real-world impact. 
+
+Right now, I’m working on two major projects:  
+- Analyzing YouTube gaming engagement to understand what makes certain videos stand out—using statistical modeling, feature engineering, and machine learning to identify the strongest engagement predictors.  
+- Studying how philanthropic foundations respond to political and economic uncertainty, including how they communicate publicly through statements, themes, and strategy choices.
+
+In addition to my academic and research work, I am also a student athlete on the UW Milwaukee women’s track and field team. This experience has shaped my work ethic, discipline, and ability to manage time effectively while balancing demanding commitments.
+
+I love learning, building, and uncovering the story behind the numbers. One quote that has always stayed with me is:
+
+> *“I know one thing: that I know nothing.”* — Socrates
+
+It reminds me to stay curious, ask better questions, and keep growing.
+
+<p align="center" style="margin-top:20px;">
+  <img src="https://lampmagician.com/wp-content/uploads/2021/10/socrates-quote.jpg?w=640"
+       alt="Socrates quote: I know that I know nothing"
+       width="380"
+       style="border-radius:12px; box-shadow:0 6px 12px rgba(75, 54, 33, 0.2);">
+</p>
+
+</div>
+
+<hr class="hr-cute">
+
+<div style="text-align:center; margin-top:30px;">
+  <a href="index.html"
+     style="color:#7a5c3d; font-size:18px; text-decoration:none; font-weight:600;">
+    ← Back to Home
+  </a>
+</div>
