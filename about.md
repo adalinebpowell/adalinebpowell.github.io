@@ -15,3 +15,9 @@ I am always looking for new challenges and ways to expand my skills. A quote fro
   <img src="https://lampmagician.com/wp-content/uploads/2021/10/socrates-quote.jpg?w=640" alt="Socrates quote: I know that I know nothing" width="400">
 </p>
 
+
+<div style="text-align:center; margin-top:40px;">
+  <a href="index.html" style="color:#7a5c3d; font-size:18px; text-decoration:none; font-weight:600;">
+    ← Back to Home
+  </a>
+</div>
