@@ -1,5 +1,5 @@
 ---
-title: "About Me"
+title: "Work History"
 website:
   title: ""
   navbar: false
@@ -40,13 +40,53 @@ nav a:hover {
   padding-bottom:3px;
 }
 
-/* Cute Divider */
+/* Job Boxes */
+.job-box {
+  background: #fff9f3;
+  border: 2px solid #d7c3a3;
+  border-radius: 16px;
+  padding: 25px;
+  margin: 25px auto;
+  max-width: 800px;
+  box-shadow: 0 6px 12px rgba(75,54,33,0.12);
+  transition: 0.3s ease;
+}
+
+.job-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 18px rgba(75,54,33,0.18);
+}
+
+.job-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.job-company {
+  font-size: 20px;
+  font-weight: 600;
+  color:#7a5c3d;
+  margin-bottom: 4px;
+}
+
+.job-time {
+  font-size: 16px;
+  color:#5f4630;
+  opacity: 0.85;
+  margin-bottom: 15px;
+}
+
+ul {
+  margin-top: 0;
+  padding-left: 20px;
+}
 .hr-cute {
   border:0;
   height:2px;
   width:60%;
   background:#d7c3a3;
-  margin:30px auto 40px auto;
+  margin:40px auto;
   border-radius:50px;
 }
 </style>
@@ -59,6 +99,11 @@ nav a:hover {
   <a href="work_history.html">Work History</a>
   <a href="projects.html">Projects</a>
 </nav>
+
+<h1 style="text-align:center; margin-top:40px;"> Work History</h1>
+<hr class="hr-cute">
+
+
 
 
 I am a data driven individual who is always looking for interesting questions to answer. Much of my work is theory driven, where I focus on understanding people, institutions, and the dynamics behind behavior. I ask how and why something is happening and what it means in a broader context. At the same time, my training is also predictive, where I focus on detecting patterns, coding, and the technical side of problem solving. I ask what the patterns are, whether we can predict them, and how accurate those predictions can be. 
