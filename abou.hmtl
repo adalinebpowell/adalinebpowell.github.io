@@ -1,0 +1,63 @@
+---
+title: "About Me"
+website:
+  title: ""
+  navbar: false
+---
+
+<style>
+body {
+  background-color: #f7f3ee;
+  color: #4b3621;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  padding: 30px;
+}
+
+/* Navigation Bar */
+nav {
+  width:100%;
+  background:#7a5c3d;
+  padding:14px 0;
+  display:flex;
+  justify-content:center;
+  gap:40px;
+  position:sticky;
+  top:0;
+  z-index:1000;
+  border-bottom: 2px solid #4b3621;
+}
+nav a {
+  color:#f7f3ee;
+  font-size:18px;
+  text-decoration:none;
+  font-weight:500;
+  transition:0.3s ease;
+}
+nav a:hover {
+  color:#e8dfd6;
+  border-bottom:2px solid #e8dfd6;
+  padding-bottom:3px;
+}
+
+/* Cute Divider */
+.hr-cute {
+  border:0;
+  height:2px;
+  width:60%;
+  background:#d7c3a3;
+  margin:30px auto 40px auto;
+  border-radius:50px;
+}
+</style>
+
+<!-- NAV BAR -->
+<nav>
+  <a href="index.html">Home</a>
+  <a href="about.html">About Me</a>
+  <a href="education.html">Education</a>
+  <a href="work_history.html">Work History</a>
+  <a href="projects.html">Projects</a>
+</nav>
+
+
