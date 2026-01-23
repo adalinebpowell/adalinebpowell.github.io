@@ -195,23 +195,13 @@ body {
     </ul>
   </div>
 
-  <div class="skill-card">
-    <h3>Data Analysis & Modeling</h3>
-    <ul>
-      <li>Regression Analysis</li>
-      <li>Predictive Modeling</li>
-      <li>Machine Learning (Supervised)</li>
-      <li>Bayesian Modeling</li>
-      <li>Exploratory Data Analysis (EDA)</li>
-    </ul>
-  </div>
 
   <div class="skill-card">
     <h3>Platforms & Tools</h3>
     <ul>
       <li>Databricks (SQL Editor, Dashboards)</li>
       <li>GitHub</li>
-      <li>R Markdown / Quarto</li>
+      <li>R Markdown </li>
       <li>ArcGIS</li>
       <li>Dashboard Visualization</li>
     </ul>
