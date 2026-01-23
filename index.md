@@ -175,7 +175,7 @@ body {
 </div>
 
 <!-- ========== HERO SECTION ========== --> 
-<section class="hero"> <img src="photodata.png" alt="Adaline Powell" class="hero-img"> <h1 class="hero-title">Adaline Powell</h1> <p class="hero-subtitle">Data Scientist •Political Scientist • Researcher</p> <p> Thanks for checking out my personal website! Feel free to reach out to me via email or LinkedIn with any questions or just to chat! </p> <a href="APowell.pdf" target="_blank" class="resume-btn">Download Résumé</a> </section> <hr class="hr-cute">
+<section class="hero"> <img src="photodata.png" alt="Adaline Powell" class="hero-img"> <h1 class="hero-title">Adaline Powell</h1> <p class="hero-subtitle">Data Scientist •Political Scientist • Researcher</p>  <a href="APowell.pdf" target="_blank" class="resume-btn">Download Résumé</a> </section> <hr class="hr-cute">
 
 
 
