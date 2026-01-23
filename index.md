@@ -175,7 +175,7 @@ body {
 </div>
 
 <!-- ========== HERO SECTION ========== --> 
-<section class="hero"> <img src="photodata.png" alt="Adaline Powell" class="hero-img"> <h1 class="hero-title">Adaline Powell</h1> <p class="hero-subtitle">Data Scientist •Political Scientist • Researcher</p> <p> Thanks for checking out my personal website! Feel free to reach out to me via email or LinkedIn with any questions or just to chat! </p> <a href="resume.pdf" target="_blank" class="resume-btn">Download Résumé</a> </section> <hr class="hr-cute">
+<section class="hero"> <img src="photodata.png" alt="Adaline Powell" class="hero-img"> <h1 class="hero-title">Adaline Powell</h1> <p class="hero-subtitle">Data Scientist •Political Scientist • Researcher</p> <p> Thanks for checking out my personal website! Feel free to reach out to me via email or LinkedIn with any questions or just to chat! </p> <a href="APowell.pdf" target="_blank" class="resume-btn">Download Résumé</a> </section> <hr class="hr-cute">
 
 
 
@@ -184,34 +184,36 @@ body {
 
 <div class="skills-grid">
   <div class="skill-card">
-    <h3>Programming</h3>
+    <h3>Programming & Query Languages</h3>
     <ul>
-      <li>R & RStudio</li>
       <li>Python</li>
+      <li>R (RStudio)</li>
+      <li>SQL</li>
       <li>Stata</li>
       <li>SPSS</li>
-      <li>Excel (Advanced)</li>
+      <li>Excel</li>
     </ul>
   </div>
 
   <div class="skill-card">
-    <h3>Modeling</h3>
+    <h3>Data Analysis & Modeling</h3>
     <ul>
-      <li>Regression (OLS, Logistic, Multinomial)</li>
+      <li>Regression Analysis</li>
       <li>Predictive Modeling</li>
-      <li>Machine Learning (Foundational)</li>
+      <li>Machine Learning (Supervised)</li>
       <li>Bayesian Modeling</li>
+      <li>Exploratory Data Analysis (EDA)</li>
     </ul>
   </div>
 
-
   <div class="skill-card">
-    <h3>Tools</h3>
+    <h3>Platforms & Tools</h3>
     <ul>
-      <li>ArcGIS</li>
+      <li>Databricks (SQL Editor, Dashboards)</li>
       <li>GitHub</li>
-      <li>Quarto / R Markdown</li>
-      <li>SQL (Basic)</li>
+      <li>R Markdown / Quarto</li>
+      <li>ArcGIS</li>
+      <li>Dashboard Visualization</li>
     </ul>
   </div>
 </div>
