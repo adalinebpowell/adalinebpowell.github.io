@@ -189,6 +189,7 @@ body {
       <li>Python</li>
       <li>R (RStudio)</li>
       <li>SQL</li>
+      <li>KQL (Kusto Query Language)</li>
       <li>Stata</li>
       <li>SPSS</li>
       <li>Excel</li>
@@ -199,11 +200,40 @@ body {
   <div class="skill-card">
     <h3>Platforms & Tools</h3>
     <ul>
-      <li>Databricks (SQL Editor, Dashboards)</li>
+      <li>Databricks (SQL Editor, Delta Lake, Dashboards)</li>
+      <li>Snowflake</li>
+      <li>Microsoft Fabric (Eventhouse, Eventstreams)</li>
+      <li>Power BI (DAX)</li>
+      <li>Streamlit</li>
       <li>GitHub</li>
-      <li>R Markdown </li>
+      <li>R Markdown</li>
       <li>ArcGIS</li>
-      <li>Dashboard Visualization</li>
+    </ul>
+  </div>
+
+
+  <div class="skill-card">
+    <h3>Data Science & Engineering</h3>
+    <ul>
+      <li>PySpark</li>
+      <li>dbt</li>
+      <li>ELT / Real-Time Data Pipelines</li>
+      <li>Machine Learning (scikit-learn, XGBoost)</li>
+      <li>Predictive Modeling & Regression</li>
+      <li>NLP</li>
+    </ul>
+  </div>
+
+
+  <div class="skill-card">
+    <h3>AI-Assisted Development</h3>
+    <ul>
+      <li>Agentic AI Systems</li>
+      <li>Multi-Agent Orchestration</li>
+      <li>Anthropic SDK / API Integration</li>
+      <li>Prompt Engineering</li>
+      <li>Tool-Use & Function Calling</li>
+      <li>AI-Assisted Data Engineering & Debugging</li>
     </ul>
   </div>
 </div>
